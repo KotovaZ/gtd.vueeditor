@@ -37,7 +37,7 @@ export default {
   methods: {
     onEdit(evt, r, c){
       let src = evt.target.innerHTML
-      this.editorData[r][c] = src
+      this.$set(this.editorData[r], c, src)
     },
     onHover(evt, r, c){
       let curTarget = evt.currentTarget;
@@ -125,6 +125,7 @@ export default {
     display: none;
     right: auto;
     transition: transform .3s ease;
+    cursor: pointer;
   }
   .delete-row{
     position: absolute;
