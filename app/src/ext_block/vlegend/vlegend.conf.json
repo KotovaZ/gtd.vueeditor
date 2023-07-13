@@ -1,0 +1,8 @@
+{
+    "name": "Легенда",
+    "type": "vlegend",
+    "handler": "",
+    "conf" : {
+      "model": "\\Ctt\\Ring\\Models\\Block\\Legend"
+    }
+  }

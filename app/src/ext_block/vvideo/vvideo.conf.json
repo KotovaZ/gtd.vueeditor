@@ -1,0 +1,8 @@
+{
+    "name": "Видео",
+    "type": "vvideo",
+    "handler": "",
+    "conf" : {
+      "model": "\\Ctt\\Ring\\Models\\Block\\Video"
+    }
+  }

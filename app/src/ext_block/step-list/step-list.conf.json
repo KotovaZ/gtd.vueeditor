@@ -1,0 +1,11 @@
+{
+    "name": "Список шагов",
+    "type": "step-list",
+    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
+    "conf": {
+        "model": "\\Ctt\\Ring\\Models\\Block\\Steps\\Steps",
+        "patterns": {
+
+        }
+    }
+}

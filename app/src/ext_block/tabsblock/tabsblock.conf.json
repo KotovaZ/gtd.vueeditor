@@ -1,0 +1,8 @@
+{
+    "name": "Блок табов",
+    "type": "tabsblock",
+    "handler": "",
+    "conf" : {
+      "model": "\\Ctt\\Ring\\Models\\Block\\TabsBlock"
+    }
+  }

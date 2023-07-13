@@ -5,70 +5,20 @@
         <input type="hidden" :value='formData' :name="inputName">
         <draggable :class="draggableClass" handle=".handle" :key="uniqueKey" v-model="result"
           :group="{ name: 'block', pull: 'clone' }" @start="startDrag" @end="endDrag" @add="onAdd">
-          <el-card :key="i" shadow="hover" class="block-wrapper" v-for="(block, i) in result">
-            <el-row class="block-header">
-              <el-col :span="19">
-                <el-divider class="block-header-name" content-position="left">
-                  {{ block.name }}
-                  <span v-if="block.code">({{ block.code }})</span>
-                  <span v-if="block.patternDisplay">({{ patternDisplay(block).label }})</span>
-                </el-divider>
-              </el-col>
-              <el-col :span="5" class="block-actions">
-                <div class="block-action" v-if="result[i - 1]">
-                  <span @click="moveUp(i)"><i class="el-icon-sort-up"></i></span>
-                </div>
-                <div class="block-action">
-                  <span @click="moveDown(i)" v-if="result[i + 1]"><i class="el-icon-sort-down"></i></span>
-                </div>
-                <div class="block-action">
-                  <span class="handle"> <i class="el-icon-rank"></i></span>
-                </div>
-                <div class="block-action">
-                  <el-popover placement="bottom-end" trigger="click">
-                    <span slot="default">
-                      <div class="block-params-edit">
-                        <div class="block-param-edit">
-                          <el-divider class="block-param-name" content-position="left">Код блока</el-divider>
-                          <el-input size="mini" v-model="block.code"></el-input>
-                        </div>
-                        <div class="block-param-edit" v-if="config(block).patterns">
-                          <el-divider class="block-param-name" content-position="left">Шаблон отображения</el-divider>
-                          <el-select v-model="block.patternDisplay" placeholder="Шаблон отображения">
-                            <el-option v-for="(pattern, code) in config(block).patterns" :key="code"
-                              :label="pattern.label" :value="code">
-                            </el-option>
-                          </el-select>
-                        </div>
-                      </div>
-                    </span>
-                    <span slot="reference">
-                      <i class="el-icon-edit"></i>
-                    </span>
-                  </el-popover>
-                </div>
-                <div class="block-action">
-                  <el-dropdown @command="handleBlockCommand">
-                    <span class="el-dropdown-link"><i class="el-icon-setting el-icon--right"></i></span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command="{ 'action': 'save', 'index': i }">Сохранить пресет</el-dropdown-item>
-                      <el-dropdown-item :command="{ 'action': 'load', 'index': i }">Загрузить пресет</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </div>
-                <div class="block-action">
-                  <span class="delete-btn" @click="deleteBlock(i)"><i class="el-icon-delete"></i></span>
-                </div>
-              </el-col>
-            </el-row>
-            <component :is="block.type" v-model="block.data" :blockValue="block.data" :blockConfig="config(block)">
-            </component>
-          </el-card>
+          <vcomponent :key="i" v-for="(block, i) in result" :block="block" :config="config(block)"
+            @handle-action="action => { handleBlockCommand(action, i) }" @on-delete="() => deleteBlock(i)"
+            @on-move="(d) => move(i, d)">
+          </vcomponent>
         </draggable>
       </el-col>
 
       <el-col class="add-block-wrapper" :span="6">
-        <draggable :class="draggableClass" handle=".handle" :key="uniqueKey" :group="{ name: 'block', pull: 'clone' }"
+        <div  v-if="showPatterns">
+          <div slot="reference" class="add-block-btn handle" @click="() => { drawer = !drawer; }">
+            <span class="add-block-text"><b>Шаблоны</b></span>
+          </div>
+        </div>
+        <draggable :class="draggableClass" @start="onStartDrag" handle=".handle" :group="{ name: 'block', pull: 'clone' }"
           :forceFallback="true">
           <div v-for="block in availableBlock">
             <el-popover v-if="block.about" :open-delay="1000" placement="right" width="400" trigger="hover">
@@ -83,6 +33,7 @@
           </div>
 
         </draggable>
+        <patterns v-if="showPatterns" :opened="drawer" @on-close="() => { drawer = false }"></patterns>
       </el-col>
     </el-row>
     <el-dialog v-loading="preset.loading" title="Выбор пресета" :visible.sync="preset.openDialog">
@@ -97,11 +48,14 @@
 
 <script>
 import draggable from 'vuedraggable';
+import patterns from './patterns.vue';
+import vcomponent from './component/vcomponent.vue';
 import axios from 'axios';
 
-export const baseComponents = BLOCK.reduce((obj, block) => {
-  return Object.assign(obj, { [block.componentName]: () => import(block.filePath + '.vue') })
-}, { draggable });
+import { store } from './store.js'
+
+
+export const baseComponents = { draggable, patterns, vcomponent };
 
 export default {
   name: "hello",
@@ -121,6 +75,8 @@ export default {
       inputName: '',
       result: [],
       allowBlock: [],
+      patterns: [],
+      drawer: false,
     }
   },
   methods: {
@@ -129,14 +85,10 @@ export default {
         return b.value === block.type;
       })
 
-      return blockConfig.config
+      return blockConfig?.config
     },
-    patternDisplay(block) {
-      let config = this.config(block);
-
-      return config?.patterns[block.patternDisplay]
-    },
-    handleBlockCommand(a) {
+    handleBlockCommand(a, i) {
+      a.index = i;
       if (a.action == 'save') {
         this.savePreset(a.index);
       }
@@ -195,6 +147,15 @@ export default {
       }
       this.result.push(blueprint);
     },
+    move(i, direction) {
+      if (direction > 0 && i > 0) {
+        this.moveUp(i);
+      }
+
+      if (direction < 0 && i < this.result.length - 1) {
+        this.moveDown(i);
+      }
+    },
     moveUp(i) {
       const current = this.result[i];
       const next = this.result[i - 1];
@@ -217,36 +178,42 @@ export default {
       this.drag = true;
     },
     endDrag(e) {
-      console.log(e, 0);
       this.drag = false;
       this.forceRender();
     },
     onAdd(event) {
-      const block = BLOCK.find(block => event.item.outerText === block.config.name);
-      let blueprint = {
-        name: block.config.name,
-        type: block.componentName,
-        patternDisplay: '',
-        code: '',
-        data: {}
+      if (store.draggableObject.type === 'component') {
+        const block = store.draggableObject.target;
+        let blueprint = {
+          name: block.config.name,
+          type: block.componentName,
+          patternDisplay: '',
+          code: '',
+          data: {}
+        }
+        this.addComponent(blueprint, event.newIndex)
       }
-      this.result.splice(event.newIndex, 0, blueprint);
-      this.drag = false;
+
+      if (store.draggableObject.type === 'pattern') {
+        const pattern = store.draggableObject.target;
+        pattern.constructor.forEach((block, i) => {
+          block.pattern = {
+            name: pattern.name,
+            code: pattern.code
+          }
+          this.addComponent(block, event.newIndex + i)
+        })
+      }
+
       this.forceRender();
     },
-    addBlockByDrag(event) {
-      console.log(event);
-      const block = this.availableBlock[event.oldDraggableIndex];
-      let blueprint = {
-        name: block.label,
-        type: block.value,
-        patternDisplay: '',
-        code: '',
-        data: {}
-      }
-      this.result.splice(event.newIndex, 0, blueprint);
+    addComponent(blueprint, index) {
+      this.result.splice(index, 0, blueprint);
       this.drag = false;
-      this.forceRender();
+    },
+    onStartDrag(event) {
+      const block = BLOCK.find(block => event.item.outerText === block.config.name);
+      store.setDraggable(block, 'component');
     }
   },
   mounted() {
@@ -266,6 +233,9 @@ export default {
     }
   },
   computed: {
+    showPatterns() {
+      return this.$root.$data.showPatterns;
+    },
     formData() {
       return JSON.stringify(this.result);
     },

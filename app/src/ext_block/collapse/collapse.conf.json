@@ -1,0 +1,8 @@
+{
+    "name": "Аккордион",
+    "type": "collapse",
+    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
+    "conf": {
+        "model": "\\Ctt\\Ring\\Models\\Block\\Collapse"
+    }
+}

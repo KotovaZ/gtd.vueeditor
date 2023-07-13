@@ -1,0 +1,8 @@
+{
+    "name": "Выбор цвета",
+    "type": "color",
+    "handler": "",
+    "conf" : {
+      "model": "\\Ctt\\Ring\\Models\\Block\\Color"
+    }
+  }

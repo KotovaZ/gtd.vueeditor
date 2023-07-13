@@ -1,0 +1,7 @@
+{
+  "name": "Редактор текста",
+  "type" : "v-text-editor",
+  "conf" : {
+    "model": "\\Ctt\\Ring\\Models\\Block\\Text"
+  }
+}

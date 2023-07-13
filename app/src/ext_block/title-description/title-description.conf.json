@@ -1,0 +1,8 @@
+{
+    "name": "Заголовок с описанием",
+    "type": "title-description",
+    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
+    "conf": {
+        "model": "\\Ctt\\Ring\\Models\\Block\\TitleDescription"
+    }
+}

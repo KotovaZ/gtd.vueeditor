@@ -1,0 +1,8 @@
+{
+    "name": "Блок-ссылка",
+    "type": "link-blocks",
+    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
+    "conf": {
+        "model": "\\Ctt\\Ring\\Models\\Block\\LinkBlock\\LinkBlocks"
+    }
+}

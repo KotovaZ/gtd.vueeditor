@@ -1,0 +1,17 @@
+{
+    "name": "Список фактоидов",
+    "type": "factoid-list",
+    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
+    "conf": {
+        "model": "\\Ctt\\Ring\\Models\\Block\\Factoids\\Factoids",
+        "patterns": {
+            "light": {
+                "label": "Светлый",
+                "default": true
+            },
+            "dark": {
+                "label": "Тёмный"
+            }
+        }
+    }
+}

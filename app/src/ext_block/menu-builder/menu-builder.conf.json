@@ -1,0 +1,6 @@
+{
+    "name": "Конструктор меню",
+    "type": "menu-builder",
+    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
+    "conf": {}
+}

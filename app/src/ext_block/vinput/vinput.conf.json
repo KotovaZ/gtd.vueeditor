@@ -1,0 +1,8 @@
+{
+    "name": "Текстовое поле (input)",
+    "type": "vinput",
+    "handler": "",
+    "conf" : {
+      "model": "\\Ctt\\Ring\\Models\\Block\\Input"
+    }
+  }

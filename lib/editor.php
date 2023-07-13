@@ -2,9 +2,14 @@
 
 namespace Gtd\VueEditor;
 
+use Bitrix\Main\Loader;
 use Bitrix\Main\Page\Asset;
+use Bx\Model\Services\FileService;
+use Gtd\VueEditor\Services\ComponentSectionService;
+use Gtd\VueEditor\Services\ComponentService;
 
-class Editor {
+class Editor
+{
 
     const ASSET_SUB_DIR = '/local/vueeditor_assets';
 
@@ -21,6 +26,7 @@ class Editor {
     private $value = '[]';
 
     private $allowBlocks = [];
+    private $showPatterns = false;
 
     /**
      * @var string
@@ -31,46 +37,50 @@ class Editor {
     {
         $this->app_id = $this->generateAppId();
         $real_base_dir = dirname(__FILE__, 5);
-        if($baseDir === ""){
+        if ($baseDir === "") {
             //TODO : находить путь от document_root динамично
             $this->moduleDir = str_replace($real_base_dir, "",  realpath(__DIR__ . '/../../../..'));
-
         }
-        $this->assetDir = $this->moduleDir.self::ASSET_SUB_DIR;
+        $this->assetDir = $this->moduleDir . self::ASSET_SUB_DIR;
     }
 
-    public function initEditor(){
+    public function initEditor()
+    {
         $this->loadJsFiles();
         $this->renderHtml();
     }
 
-    private function renderHtml(){
+    private function renderHtml()
+    {
         echo "<div id='$this->app_id'></div>";
         $this->renderTemplate('editor_script');
     }
 
-    private function renderTemplate($name){
-        $path = __DIR__ . '/templates/' .$name.'.php';
-        if(is_file($path)){
+    private function renderTemplate($name)
+    {
+        $path = __DIR__ . '/templates/' . $name . '.php';
+        if (is_file($path)) {
             include $path;
         }
     }
 
-    public function loadJsFiles(){
+    public function loadJsFiles()
+    {
         $asset = Asset::getInstance();
         $asset->addString('<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">');
-        foreach ($this->getJsFile() as $jsFileName){
-            $asset->addJs($this->assetDir.'/'.$jsFileName);
+        foreach ($this->getJsFile() as $jsFileName) {
+            $asset->addJs($this->assetDir . '/' . $jsFileName);
         }
     }
 
     /**
      * @return array|false
      */
-    private function getJsFile(){
+    private function getJsFile()
+    {
         $assetFiles = scandir($this->getAssetDir());
-        return array_filter($assetFiles, function ($arr1){
-            return stripos($arr1,'.js');
+        return array_filter($assetFiles, function ($arr1) {
+            return stripos($arr1, '.js');
         });
     }
 
@@ -79,14 +89,15 @@ class Editor {
      */
     public function getAssetDir($from_root = true)
     {
-        if($from_root){
-            return $_SERVER['DOCUMENT_ROOT'].$this->assetDir;
+        if ($from_root) {
+            return $_SERVER['DOCUMENT_ROOT'] . $this->assetDir;
         }
         return $this->assetDir;
     }
 
-    private function generateAppId(){
-        return "gtd_vue_editor_".rand(0, 999);
+    private function generateAppId()
+    {
+        return "gtd_vue_editor_" . rand(0, 999);
     }
 
 
@@ -133,6 +144,20 @@ class Editor {
     }
 
     /**
+     * @return array
+     */
+    public function getPatterns(): array
+    {
+        Loader::includeModule('bx.model');
+        
+        $componentService = new ComponentService(new FileService);
+        $componentSectionService = new ComponentSectionService($componentService);
+        return $componentSectionService
+            ->getList([])
+            ->jsonSerialize();
+    }
+
+    /**
      * @param mixed $input_name
      */
     public function setInputName($input_name): Editor
@@ -163,5 +188,21 @@ class Editor {
     public function getPropertyId()
     {
         return $this->property_id;
+    }
+
+    /**
+     * @param bool $property_id
+     */
+    public function setShowPatterns($value)
+    {
+        $this->showPatterns = $value;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getShowPatterns()
+    {
+        return (bool)$this->showPatterns;
     }
 }

@@ -1,0 +1,8 @@
+{
+    "name": "Список двигателей (Заголовок, описание, изображение, характеристики)",
+    "type": "engine-list",
+    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
+    "conf": {
+        "model": "\\Ctt\\Ring\\Models\\Block\\EngineList"
+    }
+}

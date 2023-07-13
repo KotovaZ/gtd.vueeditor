@@ -1,0 +1,43 @@
+{
+  "name": "Layout",
+  "type": "layout",
+  "conf": {
+    "model": "\\Ctt\\Ring\\Models\\Block\\Layout",
+    "patterns": {
+      "default": {
+        "label": "Простой",
+        "default": true
+      },
+      "slider": {
+        "label": "Слайдер"
+      },
+      "accordion": {
+        "label": "Аккордеон"
+      }
+    },
+    "direction": {
+      "vertical": {
+        "label": "Вертикально",
+        "default": true
+      },
+      "horizontal": {
+        "label": "Горизонтально"
+      }
+    },
+    "palette": {
+      "light": {
+        "label": "Светлая",
+        "default": true
+      },
+      "gray": {
+        "label": "Серая"
+      },
+      "dark": {
+        "label": "Тёмная"
+      },
+      "transparent": {
+        "label": "Без фона"
+      }
+    }
+  }
+}

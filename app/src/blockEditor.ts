@@ -15,14 +15,16 @@ Vue.use(VueYoutube);
 
 
 
-export default class BlockEditor{
+export default class BlockEditor {
 
-    private _inputName:String = "";
-    private _value:Array<any> = [];
-    private _allowBlock:Array<string> = [];
+    private _inputName: String = "";
+    private _value: Array<any> = [];
+    private _allowBlock: Array<string> = [];
+    private _patterns: Array<string> = [];
     private _appId: string = "";
-    private _onValueChange:valueChangeCallback;
-    private _onRendered:any;
+    private _onValueChange: valueChangeCallback;
+    private _onRendered: any;
+    private _showPatterns: boolean = false;
 
     constructor(value: Array<any>, inputName: string = "", allowBlock: Array<any>, appId: string = "") {
         this.setValue(value);
@@ -31,75 +33,85 @@ export default class BlockEditor{
         this._inputName = inputName !== "" ? inputName : this.makeId(10);
     }
 
-    initEditor(){
+    initEditor() {
         new Vue({
-            data:() => {
+            data: () => {
                 return {
                     val: this._value,
                     inputName: this._inputName,
                     allowBlocks: this._allowBlock,
+                    patterns: this._patterns,
+                    showPatterns: this._showPatterns,
                     callback: this._onValueChange
                 }
             },
             render: (h) => h(hello),
             mounted: () => {
-                if(typeof this._onRendered === 'function'){
+                if (typeof this._onRendered === 'function') {
                     this._onRendered();
                 }
             }
         }).$mount('#' + this._appId)
     }
 
-    setValue(value:Array<any>): BlockEditor
-    {
+    setValue(value: Array<any>): BlockEditor {
         this._value = value;
         return this;
     }
 
-    setJsonValue(value:string): BlockEditor
-    {
+    setJsonValue(value: string): BlockEditor {
         this._value = JSON.parse(value) || [];
         return this;
     }
 
-    setAllowBlocks(value:Array<string>): BlockEditor
-    {
+    setAllowBlocks(value: Array<string>): BlockEditor {
         this._allowBlock = value;
         return this;
     }
 
-    setJsonAllowBlocks(value:string): BlockEditor{
+    setJsonAllowBlocks(value: string): BlockEditor {
         this._allowBlock = value.length > 0 ? JSON.parse(value) : [];
         return this;
     }
 
-    setInputName(inputName:string): BlockEditor
-    {
+    setInputName(inputName: string): BlockEditor {
         this._inputName = inputName;
         return this;
     }
 
-    onValueChange(callBack:valueChangeCallback): BlockEditor
-    {
-        if(typeof callBack === "function"){
+    setShowPatterns(value: boolean): BlockEditor {
+        this._showPatterns = value;
+        return this;
+    }
+
+    setPatterns(value: Array<string>): BlockEditor {
+        this._patterns = value;
+        return this;
+    }
+
+    getShowPatterns(): boolean {
+        return this._showPatterns;
+    }
+
+    onValueChange(callBack: valueChangeCallback): BlockEditor {
+        if (typeof callBack === "function") {
             this._onValueChange = callBack;
         }
         return this;
     }
 
-    onRendered(callBack:any): BlockEditor {
-        if(typeof callBack === 'function'){
+    onRendered(callBack: any): BlockEditor {
+        if (typeof callBack === 'function') {
             this._onRendered = callBack;
         }
         return this;
     }
 
-    makeId(length:number = 10) :string
-    {
-        let result           = '';
-        const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    makeId(length: number = 10): string {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         const charactersLength = characters.length;
-        for ( var i = 0; i < length; i++ ) {
+        for (var i = 0; i < length; i++) {
             result += characters.charAt(Math.floor(Math.random() *
                 charactersLength));
         }

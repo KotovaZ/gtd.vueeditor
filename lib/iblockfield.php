@@ -90,7 +90,7 @@ class IBlockField
     {
         $propType = !empty($arProperty) && array_key_exists('USER_TYPE_SETTINGS', $arProperty)
             ? 'USER_TYPE_SETTINGS' : 'SETTINGS';
-            
+
         $arPropertyFields = array(
             "HIDE" => array("FILTRABLE", "ROW_COUNT", "COL_COUNT", "DEFAULT_VALUE"), //will hide the field
             "SET" => array("FILTRABLE" => "N"), //if set then hidden field will get this value
@@ -103,13 +103,26 @@ class IBlockField
             $selected = in_array($config->getType(), $arProperty[$propType]['ALLOW_BLOCK'] ?? []) ? "selected" : "";
             $option .= "<option " . $selected . " value='" . $config->getType() . "'>" . $config->getTitle() . "</option>";
         }
+
+        $allowPatterns = $arProperty[$propType]['SHOW_PATTERNS'] === 'Y';
+
         return '
-        <tr>
-            <td>Доступные блоки:</td>
-            <td>
-                <select size="10" multiple="multiple" name="' . $strHTMLControlName["NAME"] . '[ALLOW_BLOCK][]">' . $option . '</select>
-            </td>
-        </tr>';
+            <tr>
+                <td>Доступные блоки:</td>
+                <td>
+                    <select size="10" multiple="multiple" name="' . $strHTMLControlName["NAME"] . '[ALLOW_BLOCK][]">' . $option . '</select>
+                </td>
+            </tr>
+            <tr>
+                <td>Поддерживает шаблоны:</td>
+                <td>
+                    <select name="' . $strHTMLControlName["NAME"] . '[SHOW_PATTERNS]">
+                        <option ' . (!$allowPatterns ? 'selected' : '') . ' value>Нет</option>
+                        <option ' . ($allowPatterns ? 'selected' : '') . ' value="Y">Да</option>
+                    </select>
+                </td>
+            </tr>
+        ';
     }
 
     // для uf
@@ -124,6 +137,11 @@ class IBlockField
         if (!empty($arUserField['SETTINGS']['ALLOW_BLOCK'])) {
             $editor->setAllowBlocks($arUserField['SETTINGS']['ALLOW_BLOCK']);
         }
+
+        if (!empty($arUserField['SETTINGS']['SHOW_PATTERNS'])) {
+            $editor->setShowPatterns($arUserField['SETTINGS']['SHOW_PATTERNS']);
+        }
+
         $editor
             ->setInputName($arHtmlControl["NAME"])
             ->initEditor();
@@ -142,6 +160,11 @@ class IBlockField
         if (!empty($arProperty['USER_TYPE_SETTINGS']['ALLOW_BLOCK'])) {
             $editor->setAllowBlocks($arProperty['USER_TYPE_SETTINGS']['ALLOW_BLOCK']);
         }
+
+        if (!empty($arProperty['USER_TYPE_SETTINGS']['SHOW_PATTERNS'])) {
+            $editor->setShowPatterns($arProperty['USER_TYPE_SETTINGS']['SHOW_PATTERNS']);
+        }
+
         $editor
             ->setInputName($strHTMLControlName["VALUE"])
             ->initEditor();

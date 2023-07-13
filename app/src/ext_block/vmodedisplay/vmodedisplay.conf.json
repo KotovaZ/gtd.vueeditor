@@ -1,0 +1,7 @@
+{
+  "name": "Настройки отображения контента",
+  "type" : "vmodedisplay",
+  "conf" : {
+    "model": "\\Ctt\\Ring\\Models\\Block\\ModesDisplay"
+  }
+}

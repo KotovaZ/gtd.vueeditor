@@ -1,0 +1,8 @@
+{
+    "name": "Выбор иконки",
+    "type": "vicon-list",
+    "handler": "",
+    "conf" : {
+      "model": "\\Ctt\\Ring\\Models\\Block\\IconList"
+    }
+  }

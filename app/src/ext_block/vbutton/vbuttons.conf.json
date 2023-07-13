@@ -1,0 +1,8 @@
+{
+    "name": "Кнопка",
+    "type": "vbuttons",
+    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
+    "conf" : {
+      "model": "\\Ctt\\Ring\\Models\\Block\\ButtonList"
+    }
+  }

@@ -1,0 +1,8 @@
+{
+    "name": "Слайдер",
+    "type": "slider",
+    "handler": "",
+    "conf" : {
+      "model": "\\Ctt\\Ring\\Models\\Block\\Slider"
+    }
+  }
