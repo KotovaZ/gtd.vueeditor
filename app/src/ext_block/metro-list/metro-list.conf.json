@@ -1,8 +1,0 @@
-{
-    "name": "Выбор метро",
-    "type": "metro-list",
-    "handler": "",
-    "conf" : {
-      "model": "\\Ctt\\Ring\\Models\\Block\\MetroList"
-    }
-  }

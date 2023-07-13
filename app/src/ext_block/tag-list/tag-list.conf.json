@@ -1,8 +1,0 @@
-{
-    "name": "Список тегов",
-    "type": "tag-list",
-    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
-    "conf": {
-        "model": "\\Ctt\\Ring\\Models\\Block\\TagList"
-    }
-}

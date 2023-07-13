@@ -1,8 +1,0 @@
-{
-    "name": "Заголовок с тегами",
-    "type": "title-with-tags",
-    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
-    "conf": {
-        "model": "\\Ctt\\Ring\\Models\\Block\\TitleWithTags"
-    }
-}

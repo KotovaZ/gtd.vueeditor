@@ -1,8 +1,0 @@
-{
-    "name": "Список видео",
-    "type": "vvideo-list",
-    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
-    "conf": {
-        "model": "\\Ctt\\Ring\\Models\\Block\\VideoList"
-    }
-}

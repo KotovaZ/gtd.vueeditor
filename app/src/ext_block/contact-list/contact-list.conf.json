@@ -1,8 +1,0 @@
-{
-    "name": "Список контактов",
-    "type": "contact-list",
-    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
-    "conf": {
-        "model": "\\Ctt\\Ring\\Models\\Block\\ContactList"
-    }
-}

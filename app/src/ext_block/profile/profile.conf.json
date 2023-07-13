@@ -1,8 +1,0 @@
-{
-    "name": "Профиль",
-    "type": "profile",
-    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
-    "conf" : {
-      "model": "\\Ctt\\Ring\\Models\\Block\\Profile"
-    }
-  }

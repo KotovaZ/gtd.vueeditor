@@ -1,8 +1,0 @@
-{
-    "name": "Управление секвенцией",
-    "type": "sequence",
-    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
-    "conf": {
-        "model": "\\Ctt\\Ring\\Models\\Block\\Sequence"
-    }
-}

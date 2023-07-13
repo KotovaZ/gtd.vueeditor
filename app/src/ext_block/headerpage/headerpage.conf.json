@@ -1,8 +1,0 @@
-{
-    "name": "Шапка страницы",
-    "type": "headerpage",
-    "handler": "\\Gtd\\VueEditor\\Block\\DefaultHandler",
-    "conf" : {
-      "model": "\\Ctt\\Ring\\Models\\Block\\HeaderPage"
-    }
-  }
