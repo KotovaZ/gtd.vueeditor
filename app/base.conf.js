@@ -79,7 +79,9 @@ const config = {
     resolve: {
         modules: [path.join(__dirname, '../../../node_modules'), 'node_modules'],
         alias: {
-            'vue$': 'vue/dist/vue.esm.js'
+            'vue$': 'vue/dist/vue.esm.js',
+            root: __dirname,
+            src: path.resolve(__dirname, 'src'),
         },
         extensions: ['*', '.js', '.vue', '.json']
     },
