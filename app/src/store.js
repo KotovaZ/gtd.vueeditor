@@ -1,9 +1,9 @@
 import { reactive } from 'vue'
 
 export const store = reactive({
-    dragableObject: null,
-    setDragable(object, type, extra = {}) {
-        this.dragableObject = {
+    draggableObject: null,
+    setDraggable(object, type, extra = {}) {
+        this.draggableObject = {
             target: object,
             type,
             extra
