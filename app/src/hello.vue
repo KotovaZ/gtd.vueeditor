@@ -1,25 +1,26 @@
 <template>
   <el-card id="el-container" style="margin: auto">
     <el-row class="main-row">
-      <el-col class="content-wrapper" :span="18">
+      <el-col class="content-wrapper" :span="21">
         <input type="hidden" :value='formData' :name="inputName">
         <draggable :class="draggableClass" handle=".handle" :key="uniqueKey" v-model="result"
-          :group="{ name: 'block', pull: 'clone' }" @start="startDrag" @end="endDrag" @add="onAdd">
+                   :group="{ name: 'block', pull: 'clone' }" @start="startDrag" @end="endDrag" @add="onAdd">
           <vcomponent :key="i" v-for="(block, i) in result" :block="block" :config="config(block)"
-            @handle-action="action => { handleBlockCommand(action, i) }" @on-delete="() => deleteBlock(i)"
-            @on-move="(d) => move(i, d)">
+                      @handle-action="action => { handleBlockCommand(action, i) }" @on-delete="() => deleteBlock(i)"
+                      @on-move="(d) => move(i, d)">
           </vcomponent>
         </draggable>
       </el-col>
 
-      <el-col class="add-block-wrapper" :span="6">
-        <div  v-if="showPatterns">
+      <el-col class="add-block-wrapper" :span="3">
+        <div v-if="showPatterns">
           <div slot="reference" class="add-block-btn handle" @click="() => { drawer = !drawer; }">
             <span class="add-block-text"><b>Шаблоны</b></span>
           </div>
         </div>
-        <draggable :class="draggableClass" @start="onStartDrag" handle=".handle" :group="{ name: 'block', pull: 'clone' }"
-          :forceFallback="true">
+        <draggable :class="draggableClass" @start="onStartDrag" handle=".handle"
+                   :group="{ name: 'block', pull: 'clone' }"
+                   :forceFallback="true">
           <div v-for="block in availableBlock">
             <el-popover v-if="block.about" :open-delay="1000" placement="right" width="400" trigger="hover">
               <el-image style="width: 400px; height: 400px" :src="block.about.img" fit="fill"></el-image>
@@ -242,7 +243,7 @@ export default {
     availableBlock() {
       let blocks = [];
       BLOCK.forEach(b => {
-        if (this.allowBlock.length === 0 || this.allowBlock.includes(b.componentName))
+        if (this.allowBlock.includes(b.componentName))
           blocks.push({
             label: b.config.name,
             value: b.componentName,
@@ -302,8 +303,8 @@ export default {
 }
 
 .add-block-wrapper {
-  padding-left: 35px;
-  padding-right: 35px;
+  padding-left: 20px;
+  padding-right: 0;
 }
 
 .content-wrapper {
@@ -358,7 +359,7 @@ adm-workarea .el-input--mini input.el-input__inner {
 .add-block-btn {
   border: 1px solid #c9e7f9;
   border-radius: 3px;
-  padding: 7px;
+  padding: 7px 10px;
   cursor: pointer;
   position: relative;
   margin-bottom: 8px;
@@ -373,10 +374,13 @@ adm-workarea .el-input--mini input.el-input__inner {
 .add-block-btn:after {
   content: '+';
   position: absolute;
-  right: 10px;
+  right: 4px;
+  top: calc(50% - 7px);
 }
 
-.add-block-text {}
+.add-block-text {
+  word-break: break-word;
+}
 
 .el-upload .adm-input-file {
   display: none !important;
@@ -392,6 +396,10 @@ adm-workarea .el-input--mini input.el-input__inner {
 
 .block-params-edit {
   padding: 5px;
+}
+
+.block-params-edit .block-param-edit {
+  padding: 8px 0;
 }
 
 .block-params-edit .block-param-name {
