@@ -9,7 +9,7 @@
       </el-option>
     </el-select>
     <el-row :gutter="20">
-      <draggable v-model="editorData.images" group="gallery" @start="drag=true" @end="drag=false">
+      <draggable v-model="editorData.images" group="gallery" @start="drag=true" @end="drag=false" style="display: flex; flex-wrap: wrap">
         <el-col :span="8" v-for="(item, i) in editorData.images">
           <el-card class="image-block" shadow="hover">
             <div class="image-wrapper">

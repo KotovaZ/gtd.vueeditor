@@ -1,11 +1,12 @@
 <template>
     <el-card shadow="hover" class="block-wrapper">
         <el-row class="block-header">
-            <el-col :span="19">
+            <el-col :span="predefined ? 24 : 19">
                 <el-divider class="block-header-name" content-position="left">
-                    <span v-if="isPattern"><b>Шаблон: {{ block.pattern.name }}</b></span>
-                    <span v-else>{{block.name}}</span>
-
+                    <span>
+                        <span v-if="isPattern"><b>Шаблон: {{ block.pattern.name }}</b></span>
+                        <span v-else>{{block.name}}</span>
+                    </span>
                     <span v-if="block.code">({{ block.code }})</span>
                     <span v-if="block.patternDisplay">({{ patternDisplay }})</span>
                 </el-divider>
@@ -25,6 +26,13 @@
                         <span slot="default">
                             <div class="block-params-edit">
                                 <div class="block-param-edit">
+                                    <el-divider class="block-param-name" content-position="left">Код компонента: <b>{{block.type}}</b></el-divider>
+                                </div>
+                                <div class="block-param-edit">
+                                    <el-divider class="block-param-name" content-position="left">Название блока</el-divider>
+                                    <el-input size="mini" v-model="block.name"></el-input>
+                                </div>
+                                <div class="block-param-edit">
                                     <el-divider class="block-param-name" content-position="left">Код блока</el-divider>
                                     <el-input size="mini" v-model="block.code"></el-input>
                                 </div>
@@ -33,7 +41,7 @@
                                         отображения</el-divider>
                                     <el-select v-model="block.patternDisplay" placeholder="Шаблон отображения">
                                         <el-option v-for="(pattern, code) in config.patterns" :key="code"
-                                            :label="pattern.label" :value="code">
+                                                   :label="pattern.label" :value="code">
                                         </el-option>
                                     </el-select>
                                 </div>
@@ -60,11 +68,11 @@
                 </div>
             </el-col>
         </el-row>
-        <component :predefined="isPattern" :movable="movable" :is="block.type" v-model="block.data" :blockValue="block.data" :blockConfig="config">
+        <component :predefined="isPattern" :movable="movable" :is="block.type" v-model="block.data" :blockValue="block.data" :blockConfig="componentConfig">
         </component>
     </el-card>
 </template>
-  
+
 <script>
 import draggable from 'vuedraggable';
 import { baseComponents } from '../store';
@@ -104,7 +112,7 @@ export default {
     },
     data() {
         return {
-            groups: []
+            groups: [],
         }
     },
     methods: {
@@ -115,8 +123,6 @@ export default {
     },
     computed: {
         patternDisplay() {
-            let config = this.config(block);
-
             if (!this.config || !this.config.hasOwnProperty('patterns'))
                 return '';
 
@@ -124,9 +130,17 @@ export default {
         },
         isPattern() {
             return !!this.block.pattern;
+        },
+        componentConfig() {
+            return Object.assign({}, this.config, {'selectedSettings': this.selectedSettings})
+        },
+        selectedSettings() {
+            return {
+                'patternDisplay': this.block.patternDisplay
+            }
         }
     }
-} 
+}
 </script>
 <style>
 .patterns-drawer .el-drawer__wrapper {
