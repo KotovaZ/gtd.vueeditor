@@ -68,7 +68,7 @@
                 </div>
             </el-col>
         </el-row>
-        <component :predefined="isPattern" :movable="movable" :is="block.type" v-model="block.data" :blockValue="block.data" :blockConfig="componentConfig">
+        <component :predefined="isPattern || predefined" :movable="movable" :is="block.type" v-model="block.data" :blockValue="block.data" :blockConfig="componentConfig">
         </component>
     </el-card>
 </template>
