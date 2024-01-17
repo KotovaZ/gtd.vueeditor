@@ -33,7 +33,7 @@
                                     <el-divider class="block-param-name" content-position="left">Название блока</el-divider>
                                     <el-input size="mini" v-model="block.name"></el-input>
                                 </div>
-                                <div class="block-param-edit">
+                                <div class="block-param-edit" v-if="!isPattern">
                                     <el-divider class="block-param-name" content-position="left">Код блока</el-divider>
                                     <el-input size="mini" v-model="block.code"></el-input>
                                 </div>
@@ -79,7 +79,7 @@
             </el-col>
         </el-row>
         <component :predefined="isPattern || predefined" :movable="movable" :is="block.type" v-model="block.data"
-            :blockValue="block.data" :blockConfig="componentConfig">
+            @update-config="(code, value) => this.$emit('update-config', code, value)" :blockValue="block.data" :blockConfig="componentConfig">
         </component>
     </el-card>
 </template>
