@@ -1,9 +1,9 @@
 <template>
     <div class="patterns-drawer">
-        <el-drawer :show-close="true" :modal-append-to-body="false" title="Добавить блок" size="100%"
-            :wrapperClosable="false" custom-class="patterns" direction="ltr" :visible="opened" :with-header="true"
-            :modal="false" @close="() => this.$emit('on-close')">
-            <el-tabs tab-position="left">
+        <el-drawer :show-close="true" :modal-append-to-body="false" size="100%" :wrapperClosable="false"
+            custom-class="patterns" direction="ltr" :visible="opened" :with-header="true" :modal="false"
+            @close="() => this.$emit('on-close')">
+            <el-tabs tab-position="left" v-if="!searchMode">
                 <el-tab-pane v-for="group in groups" :key="group.id" :label="group.name">
                     <div class="patterns-container">
                         <draggable group="block" handle=".handle" :key="group.id"
@@ -19,6 +19,26 @@
                     </div>
                 </el-tab-pane>
             </el-tabs>
+            <el-tabs tab-position="left" v-if="searchMode">
+                <el-tab-pane label="Результат:">
+                    <div class="patterns-container" :key="this.input">
+                        <draggable group="block" handle=".handle" :group="{ name: 'block', pull: 'clone', put: false }"
+                            :forceFallback="true" @start="onStartDrag">
+                            <div v-for="pattern in relevantComponents" :key="pattern.id" shadow="never"
+                                class="handle pattern" :pattern="pattern.id">
+                                <span>{{ pattern.name }}</span>
+                                <img v-if="!!pattern.preview_picture" :src="pattern.preview_picture.src"
+                                    style="width: 100%;">
+                            </div>
+                        </draggable>
+                    </div>
+                </el-tab-pane>
+            </el-tabs>
+            <template #title="{ close, titleId, titleClass }">
+                <el-input placeholder="введите название шаблона" v-model="input" clearable class="pattern__search">
+                    <template slot="prepend">Поиск: </template>
+                </el-input>
+            </template>
         </el-drawer>
     </div>
 </template>
@@ -39,14 +59,20 @@ export default {
     },
     data() {
         return {
+            input: '',
             groups: []
         }
     },
     methods: {
         onStartDrag(event) {
-            const group = this.groups.find(group => group.id == event.item.getAttribute('group'));
-            const pattern = group.components.find(pattern => pattern.id == event.item.getAttribute('pattern'));
-            store.setDraggable(pattern, 'pattern', pattern);
+            if (this.searchMode) {
+                const pattern = this.components.find(pattern => pattern.id == event.item.getAttribute('pattern'));
+                store.setDraggable(pattern, 'pattern', pattern);
+            } else {
+                const group = this.groups.find(group => group.id == event.item.getAttribute('group'));
+                const pattern = group.components.find(pattern => pattern.id == event.item.getAttribute('pattern'));
+                store.setDraggable(pattern, 'pattern', pattern);
+            }
         },
     },
     mounted() {
@@ -55,6 +81,20 @@ export default {
     watch: {
     },
     computed: {
+        searchMode() {
+            return !!this.input;
+        },
+        components() {
+            return this.groups
+                .reduce((result, currentGroup) => {
+                    const components = result.hasOwnProperty('components') ? result.components : result;
+                    return [...components, ...currentGroup.components];
+                });
+        },
+        relevantComponents() {
+            return this.components
+                .filter(component => component.name.toLowerCase().indexOf(this.input.toLowerCase()) >= 0);
+        }
     }
 }
 </script>
@@ -104,6 +144,10 @@ export default {
 
     .pattern img {
         margin-top: 5px;
+    }
+
+    .pattern__search {
+        margin-right: 24px;
     }
 }
 </style> 
