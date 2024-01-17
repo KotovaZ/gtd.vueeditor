@@ -5,7 +5,7 @@
                 <el-divider class="block-header-name" content-position="left">
                     <span>
                         <span v-if="isPattern"><b>Шаблон: {{ block.pattern.name }}</b></span>
-                        <span v-else>{{block.name}}</span>
+                        <span v-else>{{ block.name }}</span>
                     </span>
                     <span v-if="block.code">({{ block.code }})</span>
                     <span v-if="block.patternDisplay">({{ patternDisplay }})</span>
@@ -26,22 +26,32 @@
                         <span slot="default">
                             <div class="block-params-edit">
                                 <div class="block-param-edit">
-                                    <el-divider class="block-param-name" content-position="left">Код компонента: <b>{{block.type}}</b></el-divider>
+                                    <el-divider class="block-param-name" content-position="left">Код компонента:
+                                        <b>{{ block.type }}</b></el-divider>
                                 </div>
                                 <div class="block-param-edit">
                                     <el-divider class="block-param-name" content-position="left">Название блока</el-divider>
                                     <el-input size="mini" v-model="block.name"></el-input>
                                 </div>
-                                <div class="block-param-edit">
+                                <div class="block-param-edit" v-if="!isPattern">
                                     <el-divider class="block-param-name" content-position="left">Код блока</el-divider>
                                     <el-input size="mini" v-model="block.code"></el-input>
+                                </div>
+                                <div class="block-param-edit">
+                                    <el-divider class="block-param-name" content-position="left">Правило
+                                        отображения</el-divider>
+                                    <el-select v-model="block.displayRules" multiple placeholder="...">
+                                        <el-option v-for="item in displayRules" :key="item.value" :label="item.label"
+                                            :value="item.value">
+                                        </el-option>
+                                    </el-select>
                                 </div>
                                 <div class="block-param-edit" v-if="config.patterns">
                                     <el-divider class="block-param-name" content-position="left">Шаблон
                                         отображения</el-divider>
                                     <el-select v-model="block.patternDisplay" placeholder="Шаблон отображения">
                                         <el-option v-for="(pattern, code) in config.patterns" :key="code"
-                                                   :label="pattern.label" :value="code">
+                                            :label="pattern.label" :value="code">
                                         </el-option>
                                     </el-select>
                                 </div>
@@ -68,7 +78,8 @@
                 </div>
             </el-col>
         </el-row>
-        <component :predefined="isPattern" :movable="movable" :is="block.type" v-model="block.data" :blockValue="block.data" :blockConfig="componentConfig">
+        <component :predefined="isPattern || predefined" :movable="movable" :is="block.type" v-model="block.data"
+            @update-config="(code, value) => this.$emit('update-config', code, value)" :blockValue="block.data" :blockConfig="componentConfig">
         </component>
     </el-card>
 </template>
@@ -118,6 +129,7 @@ export default {
     methods: {
     },
     mounted() {
+        this.displayRules = this.$root.$data.displayRules ? this.$root.$data.displayRules : [];
     },
     watch: {
     },
@@ -132,7 +144,7 @@ export default {
             return !!this.block.pattern;
         },
         componentConfig() {
-            return Object.assign({}, this.config, {'selectedSettings': this.selectedSettings})
+            return Object.assign({}, this.config, { 'selectedSettings': this.selectedSettings })
         },
         selectedSettings() {
             return {

@@ -27,6 +27,8 @@ class Editor
 
     private $allowBlocks = [];
     private $showPatterns = false;
+    private $showDisplayRules = true;
+    private $displayRules = [];
 
     /**
      * @var string
@@ -46,6 +48,15 @@ class Editor
 
     public function initEditor()
     {
+        $event = new \Bitrix\Main\Event(
+            'gtd.vueeditor',
+            'onBeforeInit',
+            [
+                'editor' => $this
+            ]
+        );
+        $event->send();
+
         $this->loadJsFiles();
         $this->renderHtml();
     }
@@ -149,7 +160,7 @@ class Editor
     public function getPatterns(): array
     {
         Loader::includeModule('bx.model');
-        
+
         $componentService = new ComponentService(new FileService);
         $componentSectionService = new ComponentSectionService($componentService);
         return $componentSectionService
@@ -191,7 +202,7 @@ class Editor
     }
 
     /**
-     * @param bool $property_id
+     * @param bool $value
      */
     public function setShowPatterns($value)
     {
@@ -204,5 +215,39 @@ class Editor
     public function getShowPatterns()
     {
         return (bool)$this->showPatterns;
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function setShowDisplayRules($value)
+    {
+        $this->showDisplayRules = $value;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getShowDisplayRules()
+    {
+        return (bool)$this->showDisplayRules;
+    }
+
+    /**
+     * @return DisplayRule[]
+     */
+    public function getDisplayRules(): array
+    {
+        return $this->displayRules;
+    }
+
+    /**
+     * @param DisplayRule[] $displayRules
+     * @return self
+     */
+    public function setDisplayRules(array $displayRules): self
+    {
+        $this->displayRules = $displayRules;
+        return $this;
     }
 }
