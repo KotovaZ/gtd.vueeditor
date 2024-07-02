@@ -17,11 +17,14 @@ use Bx\Model\FetcherModel;
 use Bx\Model\Interfaces\ModelServiceInterface;
 use Bx\Model\Interfaces\UserContextInterface;
 use Bx\Model\ModelCollection;
+use Bx\Model\Services\IblockPropertyService;
 use CIBlockSection;
 use Ctt\Ring\Dealer\Admin\Application;
+use Ctt\Ring\DI\IoC;
 use Ctt\Ring\Models\Site;
 use Gtd\VueEditor\Models\ComponentSectionModel;
 use Bx\Model\Query;
+use DI\NotFoundException as DINotFoundException;
 use Exception;
 
 class ComponentSectionService extends BaseLinkedModelService
@@ -84,14 +87,17 @@ class ComponentSectionService extends BaseLinkedModelService
         $filter = [
             '=ACTIVE' => 'Y'
         ];
-        /** @var Site $site */
-        $site = Application::getInstance()->getContext()->getSite();
-        if ($site->getId() !== null) {
-            $filter[] = [
-                'LOGIC' => 'OR',
-                ['=SITE.VALUE' => $site->getId()],
-                ['=SITE.VALUE' => false]
-            ];
+
+        if ($this->issetPropertySite() === true) {
+            /** @var Site $site */
+            $site = Application::getInstance()->getContext()->getSite();
+            if ($site->getId() !== null) {
+                $filter[] = [
+                    'LOGIC' => 'OR',
+                    ['=SITE.VALUE' => $site->getId()],
+                    ['=SITE.VALUE' => false]
+                ];
+            }
         }
 
         return [
@@ -103,6 +109,24 @@ class ComponentSectionService extends BaseLinkedModelService
                 (new Query())->setFilter($filter)
             ),
         ];
+    }
+
+    /**
+     * @return bool
+     * @throws DINotFoundException
+     */
+    private function issetPropertySite(): bool
+    {
+        /** @var IblockPropertyService $propertyService */
+        $propertyService = IoC::resolve('IblockPropertyService');
+        $propertySite = $propertyService->query()->setFilter([
+            '=IBLOCK_ID' => $this->getIblockId(),
+            '=CODE' => [
+                'SITE'
+            ]
+        ])->getList()?->first();
+
+        return !($propertySite === null);
     }
 
 
