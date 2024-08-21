@@ -37,7 +37,7 @@
                                     <el-divider class="block-param-name" content-position="left">Код блока</el-divider>
                                     <el-input size="mini" v-model="block.code"></el-input>
                                 </div>
-                                <div class="block-param-edit" v-if="hasDisplayRules">
+                                <div class="block-param-edit" v-if="showDisplayRules">
                                     <el-divider class="block-param-name" content-position="left">Правило
                                         отображения</el-divider>
                                     <el-select v-model="block.displayRules" multiple filterable placeholder="...">
@@ -132,7 +132,8 @@ export default {
     data() {
         return {
             groups: [],
-            displayRules: {}
+            displayRules: {},
+            showDisplayRules: true
         }
     },
     methods: {
@@ -150,6 +151,7 @@ export default {
     },
     mounted() {
         this.$set(this, "displayRules", this.groupDisplayRules(this.$root.$data.displayRules ? this.$root.$data.displayRules : []));
+        this.showDisplayRules = !!this.$root.$data.showDisplayRules
     },
     watch: {
     },
@@ -170,9 +172,6 @@ export default {
             return {
                 'patternDisplay': this.block.patternDisplay
             }
-        },
-        hasDisplayRules() {
-            return this.displayRules && Object.values(this.displayRules).length
         }
     }
 }
