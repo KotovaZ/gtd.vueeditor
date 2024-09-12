@@ -37,13 +37,21 @@
                                     <el-divider class="block-param-name" content-position="left">Код блока</el-divider>
                                     <el-input size="mini" v-model="block.code"></el-input>
                                 </div>
-                                <div class="block-param-edit">
+                                <div class="block-param-edit" v-if="showDisplayRules">
                                     <el-divider class="block-param-name" content-position="left">Правило
                                         отображения</el-divider>
-                                    <el-select v-model="block.displayRules" multiple placeholder="...">
-                                        <el-option v-for="item in displayRules" :key="item.value" :label="item.label"
-                                            :value="item.value">
-                                        </el-option>
+                                    <el-select v-model="block.displayRules" multiple filterable placeholder="...">
+                                        <el-option-group
+                                            v-for="(group, groupName) in displayRules"
+                                            :key="groupName"
+                                            :label="groupName">
+                                            <el-option
+                                                v-for="item in group"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value">
+                                            </el-option>
+                                        </el-option-group>
                                     </el-select>
                                 </div>
                                 <div class="block-param-edit" v-if="config.patterns">
@@ -124,12 +132,26 @@ export default {
     data() {
         return {
             groups: [],
+            displayRules: {},
+            showDisplayRules: true
         }
     },
     methods: {
+        groupDisplayRules(displayRules) {
+            let groupedRules = {};
+            displayRules.forEach(function(rule) {
+                if (!groupedRules[rule.group]) {
+                    groupedRules[rule.group] = [];
+                }
+                groupedRules[rule.group].push(rule)
+            })
+
+            return groupedRules
+        }
     },
     mounted() {
-        this.displayRules = this.$root.$data.displayRules ? this.$root.$data.displayRules : [];
+        this.$set(this, "displayRules", this.groupDisplayRules(this.$root.$data.displayRules ? this.$root.$data.displayRules : []));
+        this.showDisplayRules = !!this.$root.$data.showDisplayRules
     },
     watch: {
     },

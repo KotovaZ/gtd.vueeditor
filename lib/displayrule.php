@@ -8,12 +8,14 @@ class DisplayRule implements DisplayRuleInterface
 {
     private mixed $value;
     private string $label;
+    private string $group;
 
     public function jsonSerialize()
     {
         return [
             'label' => $this->label,
-            'value' => $this->value
+            'value' => $this->value,
+            'group' => $this->group
         ];
     }
 
@@ -25,6 +27,12 @@ class DisplayRule implements DisplayRuleInterface
     public function setLabel(string $value): self
     {
         $this->label = $value;
+        return $this;
+    }
+
+    public function setGroup(string $group): self
+    {
+        $this->group = $group;
         return $this;
     }
 }

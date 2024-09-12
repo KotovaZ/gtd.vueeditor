@@ -8,4 +8,5 @@ interface DisplayRuleInterface extends JsonSerializable
 {
     public function setValue(mixed $value): self;
     public function setLabel(string $value): self;
+    public function setGroup(string $group): self;
 }
