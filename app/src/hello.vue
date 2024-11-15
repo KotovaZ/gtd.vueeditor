@@ -52,6 +52,7 @@ import draggable from 'vuedraggable';
 import patterns from './patterns.vue';
 import vcomponent from './component/vcomponent.vue';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
 import { store } from './store.js'
 
@@ -209,6 +210,10 @@ export default {
       this.forceRender();
     },
     addComponent(blueprint, index) {
+      if (!blueprint.hasOwnProperty('guid')) {
+        blueprint.guid = uuidv4();
+      }
+
       this.result.splice(index, 0, blueprint);
       this.drag = false;
     },
