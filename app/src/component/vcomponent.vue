@@ -30,6 +30,10 @@
                                         <b>{{ block.type }}</b></el-divider>
                                 </div>
                                 <div class="block-param-edit">
+                                    <el-divider class="block-param-name" content-position="left">ID блока:
+                                        <b>{{ block.guid }}</b></el-divider>
+                                </div>
+                                <div class="block-param-edit">
                                     <el-divider class="block-param-name" content-position="left">Название блока</el-divider>
                                     <el-input size="mini" v-model="block.name"></el-input>
                                 </div>
@@ -95,6 +99,7 @@
 <script>
 import draggable from 'vuedraggable';
 import { baseComponents } from '../store';
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
     name: "vcomponent",
@@ -152,6 +157,9 @@ export default {
     mounted() {
         this.$set(this, "displayRules", this.groupDisplayRules(this.$root.$data.displayRules ? this.$root.$data.displayRules : []));
         this.showDisplayRules = !!this.$root.$data.showDisplayRules
+        if (!this.block.hasOwnProperty('guid')) {
+            this.block.guid = uuidv4();
+        }
     },
     watch: {
     },
