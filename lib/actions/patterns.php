@@ -7,9 +7,9 @@ use Gtd\VueEditor\Editor;
 
 class Patterns extends Controller
 {
-    public function getAction(): array
+    public function getAction($codes = []): array
     {
         $editor = new Editor;
-        return $editor->getPatterns();
+        return $editor->getPatterns($codes);
     }
 }

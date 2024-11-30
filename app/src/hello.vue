@@ -2,42 +2,107 @@
   <el-card id="el-container" style="margin: auto">
     <el-row class="main-row">
       <el-col class="content-wrapper" :span="21">
-        <input type="hidden" :value='formData' :name="inputName">
-        <draggable :class="draggableClass" handle=".handle" :key="uniqueKey" v-model="result"
-                   :group="{ name: 'block', pull: 'clone' }" @start="startDrag" @end="endDrag" @add="onAdd">
-          <vcomponent :key="i" v-for="(block, i) in result" :block="block" :config="config(block)"
-                      @handle-action="action => { handleBlockCommand(action, i) }" @on-delete="() => deleteBlock(i)"
-                      @on-move="(d) => move(i, d)">
+        <input type="hidden" :value="formData" :name="inputName" />
+        <draggable
+          :class="draggableClass"
+          handle=".handle"
+          :key="uniqueKey"
+          v-model="result"
+          :group="{ name: 'block', pull: 'clone' }"
+          @start="startDrag"
+          @end="endDrag"
+          @add="onAdd"
+        >
+          <vcomponent
+            :key="i"
+            v-for="(block, i) in result"
+            :block="block"
+            :config="config(block)"
+            @handle-action="
+              (action) => {
+                handleBlockCommand(action, i);
+              }
+            "
+            @on-delete="() => deleteBlock(i)"
+            @on-move="(d) => move(i, d)"
+          >
           </vcomponent>
         </draggable>
       </el-col>
 
       <el-col class="add-block-wrapper" :span="3">
-        <div v-if="showPatterns">
-          <div slot="reference" class="add-block-btn handle" @click="() => { drawer = !drawer; }">
+        <div v-if="patternsEnabled">
+          <div
+            slot="reference"
+            class="add-block-btn handle"
+            v-if="showPatterns"
+            @click="
+              () => {
+                drawer = !drawer;
+              }
+            "
+          >
             <span class="add-block-text"><b>Шаблоны</b></span>
           </div>
+          <rootPatternList
+            :key="9999"
+            :patterns="rootPatterns"
+            :showPreview="false"
+            :disableDraggable="true"
+            @onStartDrag="(event) => onStartDragRootComponent(event)"
+            @onClick="(pattern) => onRootComponentClick(pattern)"
+          ></rootPatternList>
         </div>
-        <draggable :class="draggableClass" @start="onStartDrag" handle=".handle"
-                   :group="{ name: 'block', pull: 'clone' }"
-                   :forceFallback="true">
+        <draggable
+          :class="draggableClass"
+          @start="onStartDrag"
+          handle=".handle"
+          :group="{ name: 'block', pull: 'clone' }"
+          :forceFallback="true"
+        >
           <div v-for="block in availableBlock">
-            <el-popover v-if="block.about" :open-delay="1000" placement="right" width="400" trigger="hover">
-              <el-image style="width: 400px; height: 400px" :src="block.about.img" fit="fill"></el-image>
+            <el-popover
+              v-if="block.about"
+              :open-delay="1000"
+              placement="right"
+              width="400"
+              trigger="hover"
+            >
+              <el-image
+                style="width: 400px; height: 400px"
+                :src="block.about.img"
+                fit="fill"
+              ></el-image>
               <div slot="reference" class="add-block-btn" @click="addBlock(block)">
                 <span class="add-block-text">{{ block.label }}</span>
               </div>
             </el-popover>
-            <div v-else slot="reference" class="add-block-btn handle" @click="addBlock(block)">
+            <div
+              v-else
+              slot="reference"
+              class="add-block-btn handle"
+              @click="addBlock(block)"
+            >
               <span class="add-block-text">{{ block.label }}</span>
             </div>
           </div>
-
         </draggable>
-        <patterns v-if="showPatterns" :opened="drawer" @on-close="() => { drawer = false }"></patterns>
+        <patterns
+          v-if="patternsEnabled"
+          :opened="drawer"
+          @on-close="
+            () => {
+              drawer = false;
+            }
+          "
+        ></patterns>
       </el-col>
     </el-row>
-    <el-dialog v-loading="preset.loading" title="Выбор пресета" :visible.sync="preset.openDialog">
+    <el-dialog
+      v-loading="preset.loading"
+      title="Выбор пресета"
+      :visible.sync="preset.openDialog"
+    >
       <el-table @row-click="presetSelect" :data="preset.presetList">
         <el-table-column property="title" label="Заголовок"></el-table-column>
         <el-table-column property="created" label="Создана"></el-table-column>
@@ -48,16 +113,16 @@
 </template>
 
 <script>
-import draggable from 'vuedraggable';
-import patterns from './patterns.vue';
-import vcomponent from './component/vcomponent.vue';
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
+import draggable from "vuedraggable";
+import patterns from "./component/pattern/patterns.vue";
+import rootPatternList from "./component/pattern/list";
+import vcomponent from "./component/vcomponent.vue";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
-import { store } from './store.js'
+import { store } from "./store.js";
 
-
-export const baseComponents = { draggable, patterns, vcomponent };
+export const baseComponents = { draggable, patterns, vcomponent, rootPatternList };
 
 export default {
   name: "hello",
@@ -73,41 +138,42 @@ export default {
         currentIndex: 0,
         presetList: [],
       },
-      selected: '',
-      inputName: '',
+      selected: "",
+      inputName: "",
       result: [],
       allowBlock: [],
       patterns: [],
       drawer: false,
-    }
+    };
   },
   methods: {
     config(block) {
       let blockConfig = this.availableBlock.find((b) => {
         return b.value === block.type;
-      })
+      });
 
-      return blockConfig?.config
+      return blockConfig?.config;
     },
     handleBlockCommand(a, i) {
       a.index = i;
-      if (a.action == 'save') {
+      if (a.action == "save") {
         this.savePreset(a.index);
       }
-      if (a.action == 'load') {
+      if (a.action == "load") {
         this.loadPresetList(a.index);
       }
     },
     loadPresetList(i) {
       this.preset.currentIndex = i;
-      let block = this.result[i].type
+      let block = this.result[i].type;
       this.preset.loading = true;
-      axios.get('/local/modules/gtd.vueeditor/service/preset.php?action=list&block=' + block)
-        .then(res => {
+      axios
+        .get("/local/modules/gtd.vueeditor/service/preset.php?action=list&block=" + block)
+        .then((res) => {
           this.preset.presetList = res.data.result;
           this.preset.openDialog = true;
           this.preset.loading = false;
-        })
+        });
     },
     presetSelect(r, c, e) {
       this.result[this.preset.currentIndex].data = r.data;
@@ -118,21 +184,23 @@ export default {
       this.uniqueKey = new Date().getMilliseconds();
     },
     savePreset(i) {
-      this.$prompt('Введите название', 'Запись', {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
-        inputErrorMessage: 'не верное название'
+      this.$prompt("Введите название", "Запись", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
+        inputErrorMessage: "не верное название",
       }).then(({ value }) => {
-        axios.post('/local/modules/gtd.vueeditor/service/preset.php?action=save', {
-          'title': value,
-          'block': this.result[i].type,
-          'data': this.result[i].data
-        }).then(res => {
-          this.$message({
-            type: 'success',
-            message: 'Пресет записан:' + value
+        axios
+          .post("/local/modules/gtd.vueeditor/service/preset.php?action=save", {
+            title: value,
+            block: this.result[i].type,
+            data: this.result[i].data,
+          })
+          .then((res) => {
+            this.$message({
+              type: "success",
+              message: "Пресет записан:" + value,
+            });
           });
-        })
       });
     },
     deleteBlock(i) {
@@ -143,10 +211,10 @@ export default {
       let blueprint = {
         name: block.label,
         type: block.value,
-        patternDisplay: '',
-        code: '',
-        data: {}
-      }
+        patternDisplay: "",
+        code: "",
+        data: {},
+      };
       this.result.push(blueprint);
     },
     move(i, direction) {
@@ -184,33 +252,33 @@ export default {
       this.forceRender();
     },
     onAdd(event) {
-      if (store.draggableObject.type === 'component') {
+      if (store.draggableObject.type === "component") {
         const block = store.draggableObject.target;
         let blueprint = {
           name: block.config.name,
           type: block.componentName,
-          patternDisplay: '',
-          code: '',
-          data: {}
-        }
-        this.addComponent(blueprint, event.newIndex)
+          patternDisplay: "",
+          code: "",
+          data: {},
+        };
+        this.addComponent(blueprint, event.newIndex);
       }
 
-      if (store.draggableObject.type === 'pattern') {
+      if (store.draggableObject.type === "pattern") {
         const pattern = store.draggableObject.target;
         pattern.constructor.forEach((block, i) => {
           block.pattern = {
             name: pattern.name,
-            code: pattern.code
-          }
-          this.addComponent(block, event.newIndex + i)
-        })
+            code: pattern.code,
+          };
+          this.addComponent(block, event.newIndex + i);
+        });
       }
 
       this.forceRender();
     },
     addComponent(blueprint, index) {
-      if (!blueprint.hasOwnProperty('guid')) {
+      if (!blueprint.hasOwnProperty("guid")) {
         blueprint.guid = uuidv4();
       }
 
@@ -218,15 +286,31 @@ export default {
       this.drag = false;
     },
     onStartDrag(event) {
-      const block = BLOCK.find(block => event.item.outerText === block.config.name);
-      store.setDraggable(block, 'component');
-    }
+      const block = BLOCK.find((block) => event.item.outerText === block.config.name);
+      store.setDraggable(block, "component");
+    },
+    onStartDragRootComponent(event) {
+      const pattern = this.rootPatterns.find(
+        (pattern) => pattern.id == event.item.getAttribute("pattern")
+      );
+      store.setDraggable(pattern, "pattern", pattern);
+    },
+    onRootComponentClick(pattern) {
+      pattern.constructor.forEach((block, i) => {
+        block.pattern = {
+          name: pattern.name,
+          code: pattern.code,
+        };
+        this.addComponent(block, event.newIndex + i);
+      });
+    },
   },
   mounted() {
     this.result = this.$root.$data.val || [];
     this.allowBlock = this.$root.$data.allowBlocks;
     this.inputName = this.$root.$data.inputName;
     this.containerTop = this.$el.getBoundingClientRect().top;
+    this.groups = this.$root.$data.patterns;
   },
   watch: {
     result: {
@@ -235,36 +319,45 @@ export default {
           this.$root.callback(this.result);
         }
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   computed: {
     showPatterns() {
+      return this.patternsEnabled && this.rootPatterns.length === 0;
+    },
+    patternsEnabled() {
       return this.$root.$data.showPatterns;
+    },
+    rootPatterns() {
+      const rootPatterns = this.$root.$data.patterns.find(
+        (group) => group.code === "root"
+      );
+      return rootPatterns ? rootPatterns["components"] : [];
     },
     formData() {
       return JSON.stringify(this.result);
     },
     availableBlock() {
       let blocks = [];
-      BLOCK.forEach(b => {
+      BLOCK.forEach((b) => {
         if (this.allowBlock.includes(b.componentName))
           blocks.push({
             label: b.config.name,
             value: b.componentName,
             about: b.config.conf.about,
-            config: b.config.conf
-          })
-      })
+            config: b.config.conf,
+          });
+      });
       return blocks;
     },
     draggableClass() {
       return {
-        'drag-start': this.drag
-      }
-    }
-  }
-}
+        "drag-start": this.drag,
+      };
+    },
+  },
+};
 </script>
 <style>
 .block-actions {
@@ -322,20 +415,20 @@ export default {
   box-shadow: none;
   font-size: inherit;
   color: #606266;
-  background-color: #FFF;
+  background-color: #fff;
   background-image: none;
-  border: 1px solid #DCDFE6;
+  border: 1px solid #dcdfe6;
   border-radius: 4px;
-  -webkit-transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
-  transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+  -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 .adm-workarea .el-input__inner {
   -webkit-appearance: none !important;
-  background-color: #FFF !important;
+  background-color: #fff !important;
   background-image: none !important;
   border-radius: 4px !important;
-  border: 1px solid #DCDFE6 !important;
+  border: 1px solid #dcdfe6 !important;
   -webkit-box-sizing: border-box !important;
   box-sizing: border-box !important;
   color: #606266 !important;
@@ -345,8 +438,8 @@ export default {
   line-height: 40px !important;
   outline: 0 !important;
   padding: 0 15px !important;
-  -webkit-transition: border-color .2s cubic-bezier(.645, .045, .355, 1) !important;
-  transition: border-color .2s cubic-bezier(.645, .045, .355, 1) !important;
+  -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+  transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
   width: 100% !important;
   box-shadow: none !important;
   opacity: 1 !important;
@@ -377,7 +470,7 @@ adm-workarea .el-input--mini input.el-input__inner {
 }
 
 .add-block-btn:after {
-  content: '+';
+  content: "+";
   position: absolute;
   right: 4px;
   top: calc(50% - 7px);

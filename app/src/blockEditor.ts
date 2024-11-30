@@ -26,6 +26,7 @@ export default class BlockEditor {
     private _onRendered: any;
     private _showPatterns: boolean = false;
     private _showDisplayRules: boolean = true;
+    private _showSettings: boolean = true;
     private _displayRules: Array<Object> = [];
 
     constructor(value: Array<any>, inputName: string = "", allowBlock: Array<any>, appId: string = "") {
@@ -46,6 +47,7 @@ export default class BlockEditor {
                     showPatterns: this._showPatterns,
                     displayRules: this._displayRules,
                     showDisplayRules: this._showDisplayRules,
+                    showSettings: this._showSettings,
                     callback: this._onValueChange
                 }
             },
@@ -81,7 +83,7 @@ export default class BlockEditor {
     setInputName(inputName: string): BlockEditor {
         this._inputName = inputName;
         return this;
-    }
+    } 
 
     setShowPatterns(value: boolean): BlockEditor {
         this._showPatterns = value;
@@ -103,6 +105,15 @@ export default class BlockEditor {
 
     setShowDisplayRules(value: boolean): BlockEditor {
         this._showDisplayRules = value;
+        return this;
+    }
+
+    getShowSettings(): boolean {
+        return this._showSettings;
+    }
+
+    setShowSettings(value: boolean): BlockEditor {
+        this._showSettings = value;
         return this;
     }
 

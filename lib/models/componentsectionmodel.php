@@ -2,8 +2,8 @@
 
 namespace Gtd\VueEditor\Models;
 
-use Bitrix\Main\Type\DateTime;
 use Bx\Model\AbsOptimizedModel;
+use Bx\Model\Interfaces\CollectionInterface;
 use Bx\Model\ModelCollection;
 use Ctt\Ring\Models\Attributes\Model;
 
@@ -22,8 +22,8 @@ class ComponentSectionModel extends AbsOptimizedModel
 		];
 
 		if ($this->hasValueKey('components')) {
-            $data['components'] = $this->getComponents()->jsonSerialize();
-        }
+			$data['components'] = $this->getComponents()->jsonSerialize();
+		}
 
 		return $data;
 	}
@@ -32,6 +32,13 @@ class ComponentSectionModel extends AbsOptimizedModel
 	public function getComponents(): ?ModelCollection
 	{
 		return $this["components"];
+	}
+
+
+	public function setComponents(CollectionInterface $components): self
+	{
+		$this["components"] = $components;
+		return $this;
 	}
 
 
@@ -46,11 +53,12 @@ class ComponentSectionModel extends AbsOptimizedModel
 
 	/**
 	 * @param int $value
-	 * @return void
+	 * @return self
 	 */
-	public function setId(int $value)
+	public function setId(int $value): self
 	{
 		$this["ID"] = $value;
+		return $this;
 	}
 
 
@@ -65,11 +73,12 @@ class ComponentSectionModel extends AbsOptimizedModel
 
 	/**
 	 * @param string $value
-	 * @return void
+	 * @return self
 	 */
-	public function setName(string $value)
+	public function setName(string $value): self
 	{
 		$this["NAME"] = $value;
+		return $this;
 	}
 
 
@@ -84,106 +93,12 @@ class ComponentSectionModel extends AbsOptimizedModel
 
 	/**
 	 * @param string $value
-	 * @return void
+	 * @return self
 	 */
-	public function setActive(string $value)
+	public function setActive(string $value): self
 	{
 		$this["ACTIVE"] = $value;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getGlobalActive(): string
-	{
-		return (string)$this["GLOBAL_ACTIVE"];
-	}
-
-
-	/**
-	 * @param string $value
-	 * @return void
-	 */
-	public function setGlobalActive(string $value)
-	{
-		$this["GLOBAL_ACTIVE"] = $value;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getIblockId(): int
-	{
-		return (int)$this["IBLOCK_ID"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setIblockId(int $value)
-	{
-		$this["IBLOCK_ID"] = $value;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getModifiedBy(): int
-	{
-		return (int)$this["MODIFIED_BY"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setModifiedBy(int $value)
-	{
-		$this["MODIFIED_BY"] = $value;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getCreatedBy(): int
-	{
-		return (int)$this["CREATED_BY"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setCreatedBy(int $value)
-	{
-		$this["CREATED_BY"] = $value;
-	}
-
-
-	/**
-	 * @return ?DateTime
-	 */
-	public function getDateCreate(): ?DateTime
-	{
-		return $this["DATE_CREATE"] instanceof DateTime ? $this["DATE_CREATE"] : null;
-	}
-
-
-	/**
-	 * @param DateTime $value
-	 * @return void
-	 */
-	public function setDateCreate(DateTime $value)
-	{
-		$this["DATE_CREATE"] = $value;
+		return $this;
 	}
 
 
@@ -198,125 +113,12 @@ class ComponentSectionModel extends AbsOptimizedModel
 
 	/**
 	 * @param int $value
-	 * @return void
+	 * @return self
 	 */
-	public function setSort(int $value)
+	public function setSort(int $value): self
 	{
 		$this["SORT"] = $value;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getPicture(): int
-	{
-		return (int)$this["PICTURE"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setPicture(int $value)
-	{
-		$this["PICTURE"] = $value;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getDetailPicture(): int
-	{
-		return (int)$this["DETAIL_PICTURE"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setDetailPicture(int $value)
-	{
-		$this["DETAIL_PICTURE"] = $value;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getSocnetGroupId(): int
-	{
-		return (int)$this["SOCNET_GROUP_ID"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setSocnetGroupId(int $value)
-	{
-		$this["SOCNET_GROUP_ID"] = $value;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getDescription(): string
-	{
-		return (string)$this["DESCRIPTION"];
-	}
-
-
-	/**
-	 * @param string $value
-	 * @return void
-	 */
-	public function setDescription(string $value)
-	{
-		$this["DESCRIPTION"] = $value;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getDescriptionType(): string
-	{
-		return (string)$this["DESCRIPTION_TYPE"];
-	}
-
-
-	/**
-	 * @param string $value
-	 * @return void
-	 */
-	public function setDescriptionType(string $value)
-	{
-		$this["DESCRIPTION_TYPE"] = $value;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getSearchableContent(): string
-	{
-		return (string)$this["SEARCHABLE_CONTENT"];
-	}
-
-
-	/**
-	 * @param string $value
-	 * @return void
-	 */
-	public function setSearchableContent(string $value)
-	{
-		$this["SEARCHABLE_CONTENT"] = $value;
+		return $this;
 	}
 
 
@@ -331,143 +133,11 @@ class ComponentSectionModel extends AbsOptimizedModel
 
 	/**
 	 * @param string $value
-	 * @return void
+	 * @return self
 	 */
-	public function setCode(string $value)
+	public function setCode(string $value): self
 	{
 		$this["CODE"] = $value;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getXmlId(): string
-	{
-		return (string)$this["XML_ID"];
-	}
-
-
-	/**
-	 * @param string $value
-	 * @return void
-	 */
-	public function setXmlId(string $value)
-	{
-		$this["XML_ID"] = $value;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getTmpId(): string
-	{
-		return (string)$this["TMP_ID"];
-	}
-
-
-	/**
-	 * @param string $value
-	 * @return void
-	 */
-	public function setTmpId(string $value)
-	{
-		$this["TMP_ID"] = $value;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getIblockSectionId(): int
-	{
-		return (int)$this["IBLOCK_SECTION_ID"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setIblockSectionId(int $value)
-	{
-		$this["IBLOCK_SECTION_ID"] = $value;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getLeftMargin(): int
-	{
-		return (int)$this["LEFT_MARGIN"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setLeftMargin(int $value)
-	{
-		$this["LEFT_MARGIN"] = $value;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getRightMargin(): int
-	{
-		return (int)$this["RIGHT_MARGIN"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setRightMargin(int $value)
-	{
-		$this["RIGHT_MARGIN"] = $value;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getDepthLevel(): int
-	{
-		return (int)$this["DEPTH_LEVEL"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setDepthLevel(int $value)
-	{
-		$this["DEPTH_LEVEL"] = $value;
-	}
-
-
-	/**
-	 * @return ?DateTime
-	 */
-	public function getTimestampX(): ?DateTime
-	{
-		return $this["TIMESTAMP_X"] instanceof DateTime ? $this["TIMESTAMP_X"] : null;
-	}
-
-
-	/**
-	 * @param DateTime $value
-	 * @return void
-	 */
-	public function setTimestampX(DateTime $value)
-	{
-		$this["TIMESTAMP_X"] = $value;
+		return $this;
 	}
 }
