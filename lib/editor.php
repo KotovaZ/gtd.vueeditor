@@ -4,7 +4,10 @@ namespace Gtd\VueEditor;
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Page\Asset;
+use Bx\Model\ModelCollection;
 use Bx\Model\Services\FileService;
+use Gtd\VueEditor\Models\ComponentModel;
+use Gtd\VueEditor\Models\ComponentSectionModel;
 use Gtd\VueEditor\Services\ComponentSectionService;
 use Gtd\VueEditor\Services\ComponentService;
 
@@ -157,15 +160,33 @@ class Editor
     /**
      * @return array
      */
-    public function getPatterns(): array
+    public function getPatterns($codes = []): array
     {
         Loader::includeModule('bx.model');
-
         $componentService = new ComponentService(new FileService);
-        $componentSectionService = new ComponentSectionService($componentService);
-        return $componentSectionService
-            ->getList([])
-            ->jsonSerialize();
+
+        if (empty($codes)) {
+            $componentSectionService = new ComponentSectionService($componentService);
+            return $componentSectionService
+                ->getList([])
+                ->jsonSerialize();
+        }
+
+        $section = new ComponentSectionModel([]);
+        $section->setId(0)
+            ->setActive('Y')
+            ->setCode('root')
+            ->setSort(100);
+
+        $components = $componentService
+            ->getList(['filter' => ['CODE' => $codes]])
+            ->map(function (ComponentModel $section) {
+                $section->setSectionId(0);
+                return $section;
+            });
+
+        $section->setComponents(new ModelCollection($components, ComponentModel::class));
+        return [$section->jsonSerialize()];
     }
 
     /**

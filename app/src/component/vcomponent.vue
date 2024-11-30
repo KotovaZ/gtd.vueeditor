@@ -21,7 +21,7 @@
                 <div class="block-action" v-if="movable">
                     <span class="handle"> <i class="el-icon-rank"></i></span>
                 </div>
-                <div class="block-action">
+                <div class="block-action" v-if="showSettings">
                     <el-popover placement="bottom-end" trigger="click">
                         <span slot="default">
                             <div class="block-params-edit">
@@ -74,7 +74,7 @@
                         </span>
                     </el-popover>
                 </div>
-                <div class="block-action" v-if="presetsAvailable">
+                <div class="block-action" v-if="presetsAvailable && showSettings">
                     <el-dropdown @command="(command) => this.$emit('handle-action', command)">
                         <span class="el-dropdown-link"><i class="el-icon-setting el-icon--right"></i></span>
                         <el-dropdown-menu slot="dropdown">
@@ -138,7 +138,8 @@ export default {
         return {
             groups: [],
             displayRules: {},
-            showDisplayRules: true
+            showDisplayRules: true,
+            showSettings: true
         }
     },
     methods: {
@@ -160,6 +161,8 @@ export default {
         if (!this.block.hasOwnProperty('guid')) {
             this.block.guid = uuidv4();
         }
+        
+        this.showSettings = this.$root.$data.showSettings;
     },
     watch: {
     },

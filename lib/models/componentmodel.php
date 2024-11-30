@@ -19,7 +19,7 @@ class ComponentModel extends AbsOptimizedModel
 			"name" => $this->getName(),
 			"sort" => $this->getSort(),
 			"code" => $this->getCode(),
-			"section_id" => $this->getIblockSectionId(),
+			"section_id" => $this->getSectionId(),
 			"constructor" => $this->getConstructor(),
 		];
 
@@ -91,82 +91,6 @@ class ComponentModel extends AbsOptimizedModel
 	/**
 	 * @return int
 	 */
-	public function getIblockId(): int
-	{
-		return (int)$this["IBLOCK_ID"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setIblockId(int $value)
-	{
-		$this["IBLOCK_ID"] = $value;
-	}
-
-
-	/**
-	 * @return ?DateTime
-	 */
-	public function getDateCreate(): ?DateTime
-	{
-		return $this["DATE_CREATE"] instanceof DateTime ? $this["DATE_CREATE"] : null;
-	}
-
-
-	/**
-	 * @param DateTime $value
-	 * @return void
-	 */
-	public function setDateCreate(DateTime $value)
-	{
-		$this["DATE_CREATE"] = $value;
-	}
-
-
-	/**
-	 * @return ?DateTime
-	 */
-	public function getActiveFrom(): ?DateTime
-	{
-		return $this["ACTIVE_FROM"] instanceof DateTime ? $this["ACTIVE_FROM"] : null;
-	}
-
-
-	/**
-	 * @param DateTime $value
-	 * @return void
-	 */
-	public function setActiveFrom(DateTime $value)
-	{
-		$this["ACTIVE_FROM"] = $value;
-	}
-
-
-	/**
-	 * @return ?DateTime
-	 */
-	public function getActiveTo(): ?DateTime
-	{
-		return $this["ACTIVE_TO"] instanceof DateTime ? $this["ACTIVE_TO"] : null;
-	}
-
-
-	/**
-	 * @param DateTime $value
-	 * @return void
-	 */
-	public function setActiveTo(DateTime $value)
-	{
-		$this["ACTIVE_TO"] = $value;
-	}
-
-
-	/**
-	 * @return int
-	 */
 	public function getSort(): int
 	{
 		return (int)$this["SORT"];
@@ -221,44 +145,6 @@ class ComponentModel extends AbsOptimizedModel
 
 
 	/**
-	 * @return int
-	 */
-	public function getDetailPicture(): int
-	{
-		return (int)$this["DETAIL_PICTURE"];
-	}
-
-
-	/**
-	 * @param int $value
-	 * @return void
-	 */
-	public function setDetailPicture(int $value)
-	{
-		$this["DETAIL_PICTURE"] = $value;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getDetailText(): string
-	{
-		return (string)$this["DETAIL_TEXT"];
-	}
-
-
-	/**
-	 * @param string $value
-	 * @return void
-	 */
-	public function setDetailText(string $value)
-	{
-		$this["DETAIL_TEXT"] = $value;
-	}
-
-
-	/**
 	 * @return string
 	 */
 	public function getCode(): string
@@ -278,59 +164,21 @@ class ComponentModel extends AbsOptimizedModel
 
 
 	/**
-	 * @return string
+	 * @return int
 	 */
-	public function getTags(): string
+	public function getSectionId(): int
 	{
-		return (string)$this["TAGS"];
+		return (int)$this["IBLOCK_SECTION_ID"];
 	}
 
 
 	/**
-	 * @param string $value
+	 * @param int $value
 	 * @return void
 	 */
-	public function setTags(string $value)
-	{
-		$this["TAGS"] = $value;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getIblockSectionId(): string
-	{
-		return (string)$this["IBLOCK_SECTION_ID"];
-	}
-
-
-	/**
-	 * @param string $value
-	 * @return void
-	 */
-	public function setIblockSectionId(string $value)
+	public function setSectionId(int $value)
 	{
 		$this["IBLOCK_SECTION_ID"] = $value;
-	}
-
-
-	/**
-	 * @return ?DateTime
-	 */
-	public function getTimestampX(): ?DateTime
-	{
-		return $this["TIMESTAMP_X"] instanceof DateTime ? $this["TIMESTAMP_X"] : null;
-	}
-
-
-	/**
-	 * @param DateTime $value
-	 * @return void
-	 */
-	public function setTimestampX(DateTime $value)
-	{
-		$this["TIMESTAMP_X"] = $value;
 	}
 
 
