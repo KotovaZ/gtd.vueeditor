@@ -28,7 +28,7 @@ use DI\NotFoundException as DINotFoundException;
 use Exception;
 use Gtd\VueEditor\Interfaces\componentsectionserviceinterface;
 
-class ComponentSectionService extends BaseLinkedModelService implements componentsectionserviceinterface
+class SiteComponentSectionService extends BaseLinkedModelService implements componentsectionserviceinterface
 {
     /**
      * @var int
@@ -94,9 +94,6 @@ class ComponentSectionService extends BaseLinkedModelService implements componen
             $site = Application::getInstance()->getContext()->getSite();
             if ($site->getId() !== null) {
                 $filter[] = [
-                    'LOGIC' => 'OR',
-                    ['=SITE.VALUE' => $site->getId()],
-                    ['=SITE.VALUE' => false]
                 ];
             }
         }
