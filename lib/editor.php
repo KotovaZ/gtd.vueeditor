@@ -6,6 +6,7 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\Page\Asset;
 use Bx\Model\ModelCollection;
 use Bx\Model\Services\FileService;
+use Gtd\VueEditor\Factories\ComponentSectionServiceFactory;
 use Gtd\VueEditor\Models\ComponentModel;
 use Gtd\VueEditor\Models\ComponentSectionModel;
 use Gtd\VueEditor\Services\ComponentSectionService;
@@ -32,6 +33,7 @@ class Editor
     private $showPatterns = false;
     private $showDisplayRules = true;
     private $displayRules = [];
+    private $context = 'default';
 
     /**
      * @var string
@@ -47,6 +49,11 @@ class Editor
             $this->moduleDir = str_replace($real_base_dir, "",  realpath(__DIR__ . '/../../../..'));
         }
         $this->assetDir = $this->moduleDir . self::ASSET_SUB_DIR;
+    }
+
+    public function setContext(string $context)
+    {
+        $this->context = $context;
     }
 
     public function initEditor()
@@ -166,7 +173,7 @@ class Editor
         $componentService = new ComponentService(new FileService);
 
         if (empty($codes)) {
-            $componentSectionService = new ComponentSectionService($componentService);
+            $componentSectionService = ComponentSectionServiceFactory::create($this->context,$componentService);
             return $componentSectionService
                 ->getList([])
                 ->jsonSerialize();

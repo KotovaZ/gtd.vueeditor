@@ -26,8 +26,9 @@ use Gtd\VueEditor\Models\ComponentSectionModel;
 use Bx\Model\Query;
 use DI\NotFoundException as DINotFoundException;
 use Exception;
+use Gtd\VueEditor\Interfaces\componentsectionserviceinterface;
 
-class ComponentSectionService extends BaseLinkedModelService
+class ComponentSectionService extends BaseLinkedModelService implements componentsectionserviceinterface
 {
     /**
      * @var int
@@ -82,7 +83,7 @@ class ComponentSectionService extends BaseLinkedModelService
     }
 
 
-    protected function getLinkedFields(): array
+    function getLinkedFields(): array
     {
         $filter = [
             '=ACTIVE' => 'Y'
