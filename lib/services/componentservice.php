@@ -19,8 +19,9 @@ use Bx\Model\ModelCollection;
 use Bx\Model\Traits\IblockServiceTrait;
 use Gtd\VueEditor\Models\ComponentModel;
 use Exception;
+use Gtd\VueEditor\Interfaces\ComponentServiceInterface;
 
-class ComponentService extends BaseLinkedModelService implements IblockServiceInterface
+class ComponentService extends BaseLinkedModelService implements ComponentServiceInterface
 {
 	use IblockServiceTrait;
 

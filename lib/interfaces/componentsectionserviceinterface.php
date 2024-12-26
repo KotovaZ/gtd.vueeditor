@@ -2,7 +2,9 @@
 
 namespace Gtd\VueEditor\Interfaces;
 
-interface componentsectionserviceinterface
+use Bx\Model\Interfaces\ModelServiceInterface;
+
+interface ComponentSectionServiceInterface extends ModelServiceInterface
 {
     function getLinkedFields(): array;
 }

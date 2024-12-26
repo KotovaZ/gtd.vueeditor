@@ -28,7 +28,7 @@ use DI\NotFoundException as DINotFoundException;
 use Exception;
 use Gtd\VueEditor\Interfaces\componentsectionserviceinterface;
 
-class SiteComponentSectionService extends ComponentSectionService
+class AllComponentSectionService extends ComponentSectionService
 {
     function getLinkedFields(): array
     {

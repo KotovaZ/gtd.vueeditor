@@ -130,7 +130,7 @@ class IBlockField
     {
         ob_start();
         $editor = new Editor();
-        $editor->setContext('site');
+        $editor->setContext('*');
         $editor->setPropertyId($arUserField['ID']);
         if ($arHtmlControl['VALUE']) {
             $editor->setValue(htmlspecialchars_decode($arHtmlControl['VALUE']));
@@ -154,7 +154,7 @@ class IBlockField
     {
         global $APPLICATION;
         $editor = new Editor();
-        $editor->setContext('site');
+        $editor->setContext('*');
         $editor->setPropertyId($arProperty['ID']);
         if ($value['VALUE']) {
             $editor->setValue($value['VALUE']);

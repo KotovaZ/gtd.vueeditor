@@ -5,12 +5,10 @@ namespace Gtd\VueEditor;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Page\Asset;
 use Bx\Model\ModelCollection;
-use Bx\Model\Services\FileService;
 use Gtd\VueEditor\Factories\ComponentSectionServiceFactory;
+use Gtd\VueEditor\Interfaces\ComponentServiceFactoryInterface;
 use Gtd\VueEditor\Models\ComponentModel;
 use Gtd\VueEditor\Models\ComponentSectionModel;
-use Gtd\VueEditor\Services\ComponentSectionService;
-use Gtd\VueEditor\Services\ComponentService;
 
 class Editor
 {
@@ -40,8 +38,10 @@ class Editor
      */
     private $input;
 
-    public function __construct($baseDir = "")
-    {
+    public function __construct(
+        $baseDir = "",
+        private ?ComponentServiceFactoryInterface $componentServiceFactory = null
+    ) {
         $this->app_id = $this->generateAppId();
         $real_base_dir = dirname(__FILE__, 5);
         if ($baseDir === "") {
@@ -49,6 +49,10 @@ class Editor
             $this->moduleDir = str_replace($real_base_dir, "",  realpath(__DIR__ . '/../../../..'));
         }
         $this->assetDir = $this->moduleDir . self::ASSET_SUB_DIR;
+
+        if (empty($this->componentService)) {
+            $this->componentServiceFactory = new ComponentSectionServiceFactory;
+        }
     }
 
     public function setContext(string $context)
@@ -170,10 +174,9 @@ class Editor
     public function getPatterns($codes = []): array
     {
         Loader::includeModule('bx.model');
-        $componentService = new ComponentService(new FileService);
 
         if (empty($codes)) {
-            $componentSectionService = ComponentSectionServiceFactory::create($this->context,$componentService);
+            $componentSectionService = $this->componentServiceFactory->getSectionService($this->context);
             return $componentSectionService
                 ->getList([])
                 ->jsonSerialize();
@@ -185,7 +188,7 @@ class Editor
             ->setCode('root')
             ->setSort(100);
 
-        $components = $componentService
+        $components = $this->componentServiceFactory->getComponentService()
             ->getList(['filter' => ['CODE' => $codes]])
             ->map(function (ComponentModel $section) {
                 $section->setSectionId(0);
