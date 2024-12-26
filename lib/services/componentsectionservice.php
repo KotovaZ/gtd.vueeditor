@@ -33,18 +33,18 @@ class ComponentSectionService extends BaseLinkedModelService implements componen
     /**
      * @var int
      */
-    private $iblockId;
+    protected $iblockId;
 
     /**
      * @var DataManager
      */
-    private $entity;
+    protected $entity;
 
-    public function __construct(private ModelServiceInterface $componentService)
+    public function __construct(protected ModelServiceInterface $componentService)
     {
     }
 
-    private function getIblockId(): int
+    protected function getIblockId(): int
     {
         if (!empty($this->iblockId)) {
             return (int)$this->iblockId;
@@ -71,7 +71,7 @@ class ComponentSectionService extends BaseLinkedModelService implements componen
      * @throws ObjectPropertyException
      * @throws SystemException
      */
-    private function getEntityObjectMethod()
+    protected function getEntityObjectMethod()
     {
         if ($this->entity instanceof DataManager) {
             return $this->entity;
@@ -116,7 +116,7 @@ class ComponentSectionService extends BaseLinkedModelService implements componen
      * @return bool
      * @throws DINotFoundException
      */
-    private function issetPropertySite(): bool
+    protected function issetPropertySite(): bool
     {
         /** @var IblockPropertyService $propertyService */
         $propertyService = IoC::resolve('IblockPropertyService');
