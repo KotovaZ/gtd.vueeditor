@@ -17,14 +17,32 @@ export class QuillCleanTags {
         let newDelta = new this.Delta();
 
         delta.ops.forEach((option) => {
-            newDelta.insert(option.insert, this.filterAttributes(option.attributes));
+            let newOption = this.filterOption(option)
+            if (newOption) {
+                newDelta.ops.push(newOption);
+            }
         });
 
         return newDelta;
     }
 
-    filterAttributes(attributes) {
+    filterOption(option) {
+        if (typeof option.insert === 'string') {
+            option.attributes = this.filterAttributes(option.attributes);
+        } else {
+            for (const key of this.allowed) {
+                if (option.insert.hasOwnProperty(key)) {
+                    option.attributes = this.filterAttributes(option.attributes);
+                    return option;
+                }
+            }
+            return null;
+        }
 
+        return option;
+    }
+
+    filterAttributes(attributes) {
         if (!attributes) {
             return null;
         }
