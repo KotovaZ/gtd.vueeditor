@@ -92,7 +92,7 @@ class Editor
     public function loadJsFiles()
     {
         $asset = Asset::getInstance();
-        $asset->addString('<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">');
+        $asset->addString('<link rel="stylesheet" href="/local/modules/gtd.vueeditor/app/src/index.css">');
         foreach ($this->getJsFile() as $jsFileName) {
             $asset->addJs($this->assetDir . '/' . $jsFileName);
         }
