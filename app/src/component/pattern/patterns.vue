@@ -3,12 +3,12 @@
         <el-drawer :show-close="true" :modal-append-to-body="false" size="100%" :wrapperClosable="false"
             custom-class="patterns" direction="ltr" :visible="opened" :with-header="true" :modal="false"
             @close="() => this.$emit('on-close')">
-            <el-tabs tab-position="left" v-if="!searchMode">
+            <el-tabs tab-position="left" v-show="!searchMode">
                 <el-tab-pane v-for="group in groups" :key="group.id" :label="group.name">
                     <list :key="group.id" :patterns="group.components" @onStartDrag="(event) => onStartDragGroupComponent(event)"></list>
                 </el-tab-pane>
             </el-tabs>
-            <el-tabs tab-position="left" v-if="searchMode">
+            <el-tabs tab-position="left" v-show="searchMode">
                 <el-tab-pane label="Результат:">
                     <list :key="this.input" :patterns="relevantComponents" @onStartDrag="(event) => onStartDragSearchedComponent(event)"></list>
                 </el-tab-pane>
@@ -21,7 +21,7 @@
         </el-drawer>
     </div>
 </template>
-  
+
 <script>
 import draggable from 'vuedraggable';
 
@@ -64,11 +64,7 @@ export default {
             return !!this.input;
         },
         components() {
-            return this.groups
-                .reduce((result, currentGroup) => {
-                    const components = result.hasOwnProperty('components') ? result.components : result;
-                    return [...components, ...currentGroup.components];
-                });
+            return this.groups.flatMap(group => group.components);
         },
         relevantComponents() {
             return this.components
