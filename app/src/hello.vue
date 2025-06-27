@@ -512,4 +512,8 @@ adm-workarea .el-input--mini input.el-input__inner {
 .block-params-edit .block-param-name .el-divider__text.is-left {
   left: 10px;
 }
+
+.el-card .el-card__body .content-wrapper > div {
+  min-height: 200px;
+}
 </style>
