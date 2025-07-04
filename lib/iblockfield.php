@@ -14,7 +14,7 @@ use function Symfony\Component\Translation\t;
  */
 class IBlockField
 {
-
+    const MAX_TEXT_LENGTH = 65535;
     const USER_TYPE = 'BlockEditor';
 
     public static function GetUserTypeDescription()
@@ -299,5 +299,54 @@ class IBlockField
                 'TYPE' => $valueType
             );
         }
+    }
+
+    public static function validateElementJson(&$arFields)
+    {
+        $properties = \CIBlockProperty::GetList([], [ 'IBLOCK_ID' => $arFields['IBLOCK_ID'], 'USER_TYPE' => self::USER_TYPE ]);
+        while ($prop = $properties->Fetch()) {
+            $propValue = $arFields['PROPERTY_VALUES'][$prop['ID']] ?? null;
+
+            if (is_array($propValue)) {
+                foreach ($propValue as $value) {
+                    if (!self::validateJsonValue($value['VALUE'], $prop['NAME'])) {
+                        return false;
+                    }
+                }
+            } elseif (isset($arFields['PROPERTY_VALUES'][$prop['ID']]['VALUE'])) {
+                if (!self::validateJsonValue($arFields['PROPERTY_VALUES'][$prop['ID']]['VALUE'], $prop['NAME'])) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    protected static function validateJsonValue($value, $fieldName)
+    {
+        if (empty($value)) { return true; }
+
+        if (!self::isValidJson($value)) {
+            global $APPLICATION;
+            $APPLICATION->ThrowException('Поле ' . $fieldName . ': некорректный JSON формат');
+            return false;
+        }
+
+        if (strlen($value) > self::MAX_TEXT_LENGTH) {
+            global $APPLICATION;
+            $APPLICATION->ThrowException('Поле "' . $fieldName . '": размер JSON превышает максимально допустимый (' . self::MAX_TEXT_LENGTH . ' байт)');
+            return false;
+        }
+
+        return true;
+    }
+
+    protected static function isValidJson($string)
+    {
+        if (!is_string($string)) { return false; }
+
+        json_decode($string);
+        return (json_last_error() === JSON_ERROR_NONE);
     }
 }
