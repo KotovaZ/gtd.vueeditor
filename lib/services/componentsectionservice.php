@@ -40,7 +40,7 @@ class ComponentSectionService extends BaseLinkedModelService implements componen
      */
     protected $entity;
 
-    public function __construct(protected ModelServiceInterface $componentService)
+    public function __construct(protected ModelServiceInterface $componentService, protected array $contextParams)
     {
     }
 
@@ -85,31 +85,69 @@ class ComponentSectionService extends BaseLinkedModelService implements componen
 
     function getLinkedFields(): array
     {
-        $filter = [
-            '=ACTIVE' => 'Y'
-        ];
-
-        if ($this->issetPropertySite() === true) {
-            /** @var Site $site */
-            $site = Application::getInstance()->getContext()->getSite();
-            if ($site->getId() !== null) {
-                $filter[] = [
-                    'LOGIC' => 'OR',
-                    ['=SITE.VALUE' => $site->getId()],
-                    ['=SITE.VALUE' => false]
-                ];
-            }
-        }
-
         return [
             'components' => FetcherModel::initAsMultipleValue(
                 $this->componentService,
                 'components',
                 'ID',
                 'IBLOCK_SECTION_ID',
-                (new Query())->setFilter($filter)
+                (new Query())->setFilter($this->getComponentFilter())
             ),
         ];
+    }
+
+    protected function getComponentFilter(): array
+    {
+        $filter = [
+            '=ACTIVE' => 'Y',
+            $this->getComponentAccessRulesFilter()
+        ];
+        if ($this->issetPropertySite()) {
+            if ($siteFilter = $this->getComponentSiteFilter()) {
+                $filter[] = $siteFilter;
+            }
+        }
+
+
+        return $filter;
+    }
+
+    protected function getComponentSiteFilter(): array
+    {
+        $filter = [];
+        /** @var Site|null $site */
+        $siteId = $this->contextParams['siteId'];
+        if (!$siteId) {
+            return $filter;
+        }
+
+        return [
+            'LOGIC' => 'OR',
+            ['=SITE.VALUE' => $siteId],
+            ['=SITE.VALUE' => false]
+        ];
+    }
+
+    protected function getComponentAccessRulesFilter(): array
+    {
+        $filter = ['LOGIC' => 'OR'];
+        if (!isset($this->contextParams['accessRules'])) {
+            return $filter;
+        }
+
+        foreach ($this->contextParams['accessRules'] as $ruleCode) {
+            if (strtoupper($ruleCode) === 'FULL') {
+                $filter[] = [
+                    'LOGIC' => 'OR',
+                    'ACCESS_RULES.ITEM.XML_ID' => 'FULL',
+                    'ACCESS_RULES.VALUE' => null
+                ];
+                continue;
+            }
+            $filter['ACCESS_RULES.ITEM.XML_ID'][] = $ruleCode;
+        }
+
+        return $filter;
     }
 
     /**

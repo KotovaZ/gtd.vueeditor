@@ -171,14 +171,16 @@ class Editor
     /**
      * @return array
      */
-    public function getPatterns($codes = []): array
+    public function getPatterns($contextParams = []): array
     {
         Loader::includeModule('bx.model');
 
+        $codes = $contextParams['codes'];
         if (empty($codes)) {
-            $componentSectionService = $this->componentServiceFactory->getSectionService($this->context);
+            $componentSectionService = $this->componentServiceFactory->getSectionService($this->context, $contextParams);
             return $componentSectionService
                 ->getList([])
+                ->filter(fn(ComponentSectionModel $section) => !!$section->getComponents()?->count())
                 ->jsonSerialize();
         }
 
