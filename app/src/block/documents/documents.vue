@@ -46,6 +46,7 @@
   right: 10px;
   top: 10px;
   cursor:pointer;
+  z-index: 10;
 }
 .file-info{
   display: block;
