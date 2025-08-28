@@ -20,13 +20,13 @@ class ComponentSectionServiceFactory implements ComponentServiceFactoryInterface
         $this->componentService = new ComponentService($fileService);
     }
 
-    public function getSectionService(string $context): ComponentSectionServiceInterface
+    public function getSectionService(string $context, array $contextParams = []): ComponentSectionServiceInterface
     {
         switch ($context) {
             case '*':
-                return new AllComponentSectionService($this->componentService);
+                return new AllComponentSectionService($this->componentService, $contextParams);
             default:
-                return new ComponentSectionService($this->componentService);
+                return new ComponentSectionService($this->componentService, $contextParams);
         }
     }
 
