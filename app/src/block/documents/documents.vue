@@ -32,7 +32,7 @@
         :before-remove="beforeRemove"
         :on-success="onSuccess"
         multiple
-        :show-file-list="false"
+        :show-file-list="true"
         :on-exceed="handleExceed"
     >
       <el-button size="small" type="primary">Загрузить файлы</el-button>
