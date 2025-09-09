@@ -27,12 +27,16 @@
       </draggable>
       <el-col :span="8">
         <el-upload
+            class="upload"
             action="/local/modules/gtd.vueeditor/service/upload_image.php"
-            list-type="picture-card"
+            list-type="text"
             :on-success="addItem"
-            :show-file-list="false"
+            :show-file-list="true"
+            drag
+            multiple
         >
-          <i class="el-icon-plus"></i>
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">Перетащите файлы сюда или <em>нажмите для загрузки</em></div>
         </el-upload>
       </el-col>
     </el-row>
