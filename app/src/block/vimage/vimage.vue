@@ -3,7 +3,7 @@
     <el-upload
         class="avatar-uploader"
         action="/local/modules/gtd.vueeditor/service/upload_image.php"
-        :show-file-list="false"
+        :show-file-list="true"
         :on-success="handleAvatarSuccess"
     >
       <img v-if="editorData.src" :src="editorData.src" class="avatar">
