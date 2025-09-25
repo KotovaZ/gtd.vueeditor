@@ -3,6 +3,7 @@
 namespace Gtd\VueEditor;
 
 use Bitrix\Iblock\PropertyTable;
+use Bitrix\Main\Application;
 use function Symfony\Component\Translation\t;
 
 
@@ -15,6 +16,7 @@ use function Symfony\Component\Translation\t;
 class IBlockField
 {
     const MAX_TEXT_LENGTH = 65535;
+    const MAX_MEDIUMTEXT_LENGTH = 16777215;
     const USER_TYPE = 'BlockEditor';
 
     public static function GetUserTypeDescription()
@@ -309,12 +311,12 @@ class IBlockField
 
             if (is_array($propValue)) {
                 foreach ($propValue as $value) {
-                    if (!self::validateJsonValue($value['VALUE'], $prop['NAME'])) {
+                    if (!self::validateJsonValue($value['VALUE'], $prop)) {
                         return false;
                     }
                 }
             } elseif (isset($arFields['PROPERTY_VALUES'][$prop['ID']]['VALUE'])) {
-                if (!self::validateJsonValue($arFields['PROPERTY_VALUES'][$prop['ID']]['VALUE'], $prop['NAME'])) {
+                if (!self::validateJsonValue($arFields['PROPERTY_VALUES'][$prop['ID']]['VALUE'], $prop)) {
                     return false;
                 }
             }
@@ -323,9 +325,11 @@ class IBlockField
         return true;
     }
 
-    protected static function validateJsonValue($value, $fieldName)
+    protected static function validateJsonValue($value, $property)
     {
         if (empty($value)) { return true; }
+
+        $fieldName = $property['NAME'];
 
         if (!self::isValidJson($value)) {
             global $APPLICATION;
@@ -333,13 +337,54 @@ class IBlockField
             return false;
         }
 
-        if (strlen($value) > self::MAX_TEXT_LENGTH) {
+        $valueMaxLength = self::getValueMaxLength($property);
+        if (strlen($value) > $valueMaxLength) {
             global $APPLICATION;
-            $APPLICATION->ThrowException('Поле "' . $fieldName . '": размер JSON превышает максимально допустимый (' . self::MAX_TEXT_LENGTH . ' байт)');
+            $APPLICATION->ThrowException('Поле "' . $fieldName . '": размер JSON превышает максимально допустимый (' . $valueMaxLength . ' байт)');
             return false;
         }
 
         return true;
+    }
+
+    protected static function getValueMaxLength($property): int
+    {
+        $columnType = self::getColumnType($property);
+
+        switch (strtolower($columnType)) {
+            case 'mediumtext':
+                $maxLength = self::MAX_MEDIUMTEXT_LENGTH;
+                break;
+            default:
+                $maxLength = self::MAX_TEXT_LENGTH;
+        }
+
+        return $maxLength;
+
+    }
+
+    protected static function getColumnType($property)
+    {
+        $iBlockId = $property['IBLOCK_ID'];
+        $tableName = "b_iblock_element_prop_s$iBlockId";
+        $columnName = "PROPERTY_{$property['ID']}";
+        $db = Application::getConnection();
+        if (!$db->isTableExists($tableName)) {
+            $tableName = 'b_iblock_element_property';
+            $columnName = 'VALUE';
+        }
+
+        $res = $db->query("DESCRIBE $tableName");
+
+        $columnType = '';
+        while ($column = $res->fetch()) {
+            if ($column['Field'] === $columnName) {
+                $columnType = $column['Type'];
+                break;
+            }
+        }
+
+        return $columnType;
     }
 
     protected static function isValidJson($string)
