@@ -1,8 +1,9 @@
 <template>
   <div>
     <el-upload
-        class="avatar-uploader"
+        class="avatar-uploader js-upload"
         action="/local/modules/gtd.vueeditor/service/upload_image.php"
+        :before-upload="onBeforeUpload"
         :show-file-list="true"
         :on-success="handleAvatarSuccess"
     >
@@ -24,7 +25,8 @@ export default {
       editorData:{
         id: 0,
         src:""
-      }
+      },
+      loadingImagesCount: 0,
     };
   },
   watch:{
@@ -33,6 +35,9 @@ export default {
     }
   },
   methods: {
+    onBeforeUpload() {
+      document.querySelectorAll('.js-upload .el-upload-list.el-upload-list--text .el-upload-list__item').forEach(item => item.remove());
+    },
     handleAvatarSuccess(res, file) {
       this.editorData.id = res.id;
       this.editorData.src = res.src;
