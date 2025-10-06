@@ -10,7 +10,7 @@
     </el-select>
     <el-row :gutter="20">
       <draggable v-model="editorData.images" group="gallery" @start="drag=true" @end="drag=false" style="display: flex; flex-wrap: wrap">
-        <el-col :span="8" v-for="(item, i) in editorData.images">
+        <el-col :span="8" v-for="(item, i) in editorData.images" :key="i">
           <el-card class="image-block" shadow="hover">
             <div class="image-wrapper">
               <div class="image-hover"><i @click="deleteItem(i)" class="el-icon-delete"></i></div>
@@ -27,9 +27,10 @@
       </draggable>
       <el-col :span="8">
         <el-upload
-            class="upload"
+            class="upload js-upload"
             action="/local/modules/gtd.vueeditor/service/upload_image.php"
             list-type="text"
+            :before-upload="onBeforeUpload"
             :on-success="addItem"
             :show-file-list="true"
             drag
@@ -69,6 +70,7 @@ export default {
         viewType:"",
         images:[]
       },
+      loadingImagesCount: 0,
       options:[
         {
           label: 'Плитка',
@@ -82,6 +84,12 @@ export default {
     };
   },
   methods: {
+    onBeforeUpload() {
+      if (this.loadingImagesCount === 0) {
+        document.querySelectorAll('.js-upload .el-upload-list.el-upload-list--text .el-upload-list__item').forEach(item => item.remove());
+      }
+      this.loadingImagesCount++;
+    },
     addItem(res, file, fileList){
       let item = {
         imageId: res.id,
@@ -90,6 +98,8 @@ export default {
         description: ""
       };
       this.editorData.images.push(item);
+
+      this.loadingImagesCount--;
     },
     deleteItem(i){
       let fileId = this.editorData.images[i].imageId;

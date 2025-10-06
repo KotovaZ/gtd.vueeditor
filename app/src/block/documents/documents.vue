@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card  shadow="hover" v-for="(item, i) in editorData" style="margin-bottom: 20px; position: relative">
+    <el-card  shadow="hover" v-for="(item, i) in editorData" :key="i" style="margin-bottom: 20px; position: relative">
       <span class="deleteFile" @click="deleteFile(i)"><i class="el-icon-close"></i></span>
       <el-row :gutter="20">
         <el-col :span="4" class="file-icon-wrapper">
@@ -25,8 +25,9 @@
       </el-row>
     </el-card>
     <el-upload
-        class="upload-demo"
+        class="upload-demo js-upload"
         action="/local/modules/gtd.vueeditor/service/upload_file.php"
+        :before-upload="onBeforeUpload"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
@@ -68,9 +69,16 @@ export default {
   data(){
     return {
       editorData:[],
+      loadingImagesCount: 0,
     }
   },
   methods: {
+    onBeforeUpload() {
+      if (this.loadingImagesCount === 0) {
+        document.querySelectorAll('.js-upload .el-upload-list.el-upload-list--text .el-upload-list__item').forEach(item => item.remove());
+      }
+      this.loadingImagesCount++;
+    },
     deleteFile(i){
       let file = this.editorData[i].file;
       axios.get('/local/modules/gtd.vueeditor/service/delete_file.php?id=' + file.id)
@@ -104,6 +112,8 @@ export default {
         description: '',
         file: file
       });
+
+      this.loadingImagesCount--;
     }
   }
 }
